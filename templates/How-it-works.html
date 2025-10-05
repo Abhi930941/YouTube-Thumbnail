@@ -1,0 +1,1238 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="how-it-works-hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1><i class="fas fa-cogs"></i> How It Works</h1>
+            <p class="subtitle">Create professional YouTube thumbnails in minutes</p>
+            <p class="description">Choose your preferred workflow - Simple Mode for speed or Advanced Mode for precision</p>
+        </div>
+    </div>
+</section>
+
+<section class="workflow-selector">
+    <div class="container">
+        <div class="workflow-toggle">
+            <button class="workflow-btn active" data-workflow="simple">
+                <i class="fas fa-bolt"></i>
+                <div class="btn-content">
+                    <h3>Simple Mode</h3>
+                    <p>Quick & Easy</p>
+                </div>
+            </button>
+            <button class="workflow-btn" data-workflow="advanced">
+                <i class="fas fa-magic"></i>
+                <div class="btn-content">
+                    <h3>Advanced Mode</h3>
+                    <p>Creative Control</p>
+                </div>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Simple Mode Workflow -->
+<section class="workflow-content active" id="simple-workflow">
+    <div class="container">
+        <div class="workflow-header">
+            <h2><i class="fas fa-bolt"></i> Simple Mode Workflow</h2>
+            <p class="workflow-subtitle">Perfect for creators who need thumbnails fast - typically takes 30 seconds</p>
+            <div class="time-badge">
+                <i class="fas fa-clock"></i> 30 seconds
+            </div>
+        </div>
+        
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3><i class="fas fa-keyboard"></i> Enter Your Content</h3>
+                    <p>Add your video title (up to 50 characters) and subtitle (up to 80 characters)</p>
+                    <div class="step-features">
+                        <span class="feature-tag">Live character count</span>
+                        <span class="feature-tag">Real-time preview</span>
+                    </div>
+                    <div class="step-visual">
+                        <div class="mock-form">
+                            <div class="mock-input">YOUR TITLE HERE <span class="char-count">15/50</span></div>
+                            <div class="mock-input subtitle">Your subtitle text <span class="char-count">17/80</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3><i class="fas fa-text-height"></i> Style Your Text</h3>
+                    <p>Customize font sizes, colors, and styles with easy-to-use controls</p>
+                    <div class="step-features">
+                        <span class="feature-tag">Font size 24-72px</span>
+                        <span class="feature-tag">Bold, italic, underline</span>
+                        <span class="feature-tag">Text shadows</span>
+                    </div>
+                    <div class="step-visual">
+                        <div class="style-controls">
+                            <div class="control-group">
+                                <span>Size:</span>
+                                <div class="slider"></div>
+                                <span>48px</span>
+                            </div>
+                            <div class="style-buttons">
+                                <button class="style-btn active">B</button>
+                                <button class="style-btn">I</button>
+                                <button class="style-btn">U</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3><i class="fas fa-palette"></i> Choose Background</h3>
+                    <p>Select a color from the palette or upload your own image background</p>
+                    <div class="step-features">
+                        <span class="feature-tag">6 quick templates</span>
+                        <span class="feature-tag">Custom colors</span>
+                        <span class="feature-tag">Image upload</span>
+                    </div>
+                    <div class="step-visual">
+                        <div class="color-palette">
+                            <div class="color-option active" style="background: #FF0000;"></div>
+                            <div class="color-option" style="background: #000000;"></div>
+                            <div class="color-option" style="background: #FFCC00;"></div>
+                            <div class="color-option" style="background: #0066FF;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3><i class="fas fa-eye"></i> Live Preview</h3>
+                    <p>Watch your thumbnail update in real-time as you make changes</p>
+                    <div class="step-features">
+                        <span class="feature-tag">Instant updates</span>
+                        <span class="feature-tag">1280x720 preview</span>
+                    </div>
+                    <div class="step-visual">
+                        <div class="thumbnail-preview">
+                            <div class="preview-title">YOUR TITLE HERE</div>
+                            <div class="preview-subtitle">Your subtitle text</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3><i class="fas fa-download"></i> Download Instantly</h3>
+                    <p>Get your YouTube-ready thumbnail in perfect 1280x720 resolution</p>
+                    <div class="step-features">
+                        <span class="feature-tag">PNG format</span>
+                        <span class="feature-tag">High quality</span>
+                        <span class="feature-tag">YouTube ready</span>
+                    </div>
+                    <div class="step-visual">
+                        <button class="download-demo">
+                            <i class="fas fa-download"></i>
+                            Download Thumbnail
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Advanced Mode Workflow -->
+<section class="workflow-content" id="advanced-workflow">
+    <div class="container">
+        <div class="workflow-header">
+            <h2><i class="fas fa-magic"></i> Advanced Mode Workflow</h2>
+            <p class="workflow-subtitle">For creators who want complete creative control - typically takes 2-5 minutes</p>
+            <div class="time-badge advanced">
+                <i class="fas fa-clock"></i> 2-5 minutes
+            </div>
+        </div>
+        
+        <div class="steps-container advanced">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3><i class="fas fa-mouse-pointer"></i> Visual Canvas Setup</h3>
+                    <p>Start with a professional 1280x720 canvas and choose from 20+ premium templates</p>
+                    <div class="step-features">
+                        <span class="feature-tag">Premium templates</span>
+                        <span class="feature-tag">Gradient backgrounds</span>
+                        <span class="feature-tag">Drag & drop interface</span>
+                    </div>
+                    <div class="step-visual">
+                        <div class="canvas-mockup">
+                            <div class="canvas-bg gradient"></div>
+                            <div class="template-selector">
+                                <div class="template-thumb active"></div>
+                                <div class="template-thumb"></div>
+                                <div class="template-thumb"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3><i class="fas fa-plus-circle"></i> Add Elements</h3>
+                    <p>Add unlimited text, shapes, icons, and images with the toolbar</p>
+                    <div class="step-features">
+                        <span class="feature-tag">Unlimited text</span>
+                        <span class="feature-tag">6 shape types</span>
+                        <span class="feature-tag">20+ icons</span>
+                        <span class="feature-tag">Multiple images</span>
+                    </div>
+                    <div class="step-visual">
+                        <div class="toolbar-mockup">
+                            <button class="tool-btn active"><i class="fas fa-font"></i></button>
+                            <button class="tool-btn"><i class="fas fa-shapes"></i></button>
+                            <button class="tool-btn"><i class="fas fa-icons"></i></button>
+                            <button class="tool-btn"><i class="fas fa-image"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3><i class="fas fa-arrows-alt"></i> Position & Customize</h3>
+                    <p>Drag elements anywhere on the canvas and customize every detail</p>
+                    <div class="step-features">
+                        <span class="feature-tag">Drag positioning</span>
+                        <span class="feature-tag">Resize handles</span>
+                        <span class="feature-tag">Layer management</span>
+                    </div>
+                    <div class="step-visual">
+                        <div class="drag-demo">
+                            <div class="element-box selected">
+                                <span>Drag me!</span>
+                                <div class="resize-handle"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3><i class="fas fa-sliders-h"></i> Fine-tune Properties</h3>
+                    <p>Use the properties panel to adjust colors, sizes, shadows, and more</p>
+                    <div class="step-features">
+                        <span class="feature-tag">Color picker</span>
+                        <span class="feature-tag">Shadow effects</span>
+                        <span class="feature-tag">Opacity control</span>
+                        <span class="feature-tag">Font options</span>
+                    </div>
+                    <div class="step-visual">
+                        <div class="properties-panel">
+                            <h4>Text Properties</h4>
+                            <div class="property-row">
+                                <span>Font Size:</span>
+                                <div class="slider"></div>
+                                <span>48px</span>
+                            </div>
+                            <div class="property-row">
+                                <span>Color:</span>
+                                <div class="color-picker"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h3><i class="fas fa-download"></i> Export Masterpiece</h3>
+                    <p>Download your professionally crafted thumbnail with pixel-perfect quality</p>
+                    <div class="step-features">
+                        <span class="feature-tag">Canvas-to-image</span>
+                        <span class="feature-tag">High-res PNG</span>
+                        <span class="feature-tag">Perfect quality</span>
+                    </div>
+                    <div class="step-visual">
+                        <button class="download-demo advanced">
+                            <i class="fas fa-magic"></i>
+                            Download Advanced Thumbnail
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="comparison-workflow">
+    <div class="container">
+        <h2>Which Mode Is Right for You?</h2>
+        
+        <div class="mode-comparison">
+            <div class="mode-card simple">
+                <div class="mode-header">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Simple Mode</h3>
+                </div>
+                <div class="mode-body">
+                    <div class="time-indicator">
+                        <i class="fas fa-clock"></i>
+                        <span>30 seconds</span>
+                    </div>
+                    <h4>Perfect for:</h4>
+                    <ul>
+                        <li>Quick thumbnail creation</li>
+                        <li>Consistent branding</li>
+                        <li>Beginner creators</li>
+                        <li>High-volume content</li>
+                    </ul>
+                    <h4>You get:</h4>
+                    <ul>
+                        <li>Title + subtitle text</li>
+                        <li>6 color templates</li>
+                        <li>Basic text styling</li>
+                        <li>Image backgrounds</li>
+                    </ul>
+                </div>
+                <div class="mode-footer">
+                    <a href="/generator" class="mode-cta simple">
+                        <i class="fas fa-rocket"></i> Try Simple Mode
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mode-card advanced">
+                <div class="mode-header">
+                    <i class="fas fa-magic"></i>
+                    <h3>Advanced Mode</h3>
+                </div>
+                <div class="mode-body">
+                    <div class="time-indicator">
+                        <i class="fas fa-clock"></i>
+                        <span>2-5 minutes</span>
+                    </div>
+                    <h4>Perfect for:</h4>
+                    <ul>
+                        <li>Custom designs</li>
+                        <li>Professional look</li>
+                        <li>Creative control</li>
+                        <li>Unique thumbnails</li>
+                    </ul>
+                    <h4>You get:</h4>
+                    <ul>
+                        <li>Unlimited elements</li>
+                        <li>20+ premium templates</li>
+                        <li>Shapes & icons library</li>
+                        <li>Drag & drop editor</li>
+                    </ul>
+                </div>
+                <div class="mode-footer">
+                    <!-- FIXED: Add mode parameter to URL -->
+                    <a href="/generator?mode=advanced" class="mode-cta advanced">
+                        <i class="fas fa-magic"></i> Try Advanced Mode
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="tips-section">
+    <div class="container">
+        <h2><i class="fas fa-lightbulb"></i> Pro Tips for Great Thumbnails</h2>
+        
+        <div class="tips-grid">
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3>High Contrast</h3>
+                <p>Use contrasting colors between text and background for maximum readability on all devices.</p>
+            </div>
+            
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-font"></i>
+                </div>
+                <h3>Large Text</h3>
+                <p>Keep text large and bold - thumbnails appear small on mobile devices and in YouTube feeds.</p>
+            </div>
+            
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-smile"></i>
+                </div>
+                <h3>Show Emotion</h3>
+                <p>Use expressive faces, bright colors, and compelling visuals to trigger emotional responses.</p>
+            </div>
+            
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Mobile First</h3>
+                <p>Design for mobile viewing - most YouTube traffic comes from smartphones and tablets.</p>
+            </div>
+            
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <h3>Brand Colors</h3>
+                <p>Use consistent colors across your thumbnails to build brand recognition and channel identity.</p>
+            </div>
+            
+            <div class="tip-card">
+                <div class="tip-icon">
+                    <i class="fas fa-compress"></i>
+                </div>
+                <h3>Less Is More</h3>
+                <p>Avoid cluttered designs - focus on one main message that viewers can understand instantly.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="final-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Ready to Create Your First Thumbnail?</h2>
+            <p>Join thousands of creators who've improved their click-through rates with our thumbnail maker</p>
+            <div class="cta-buttons">
+                <a href="/generator" class="cta-button primary">
+                    <i class="fas fa-play"></i> Start Creating Now
+                </a>
+                <a href="/features" class="cta-button secondary">
+                    <i class="fas fa-list"></i> View All Features
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- All existing styles remain the same -->
+<style>
+/* ... all your existing CSS styles ... */
+.how-it-works-hero {
+    background: linear-gradient(135deg, rgba(252, 8, 8, 0.904), rgba(246, 6, 6, 0.904));
+    padding: 80px 0 60px;
+    text-align: center;
+}
+
+.how-it-works-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: var(--dark-color);
+}
+
+.how-it-works-hero .subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #302b2b;
+}
+
+.how-it-works-hero .description {
+    font-size: 1.1rem;
+    color: #2f2c2c;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.workflow-selector {
+    padding: 40px 0;
+    background: white;
+}
+
+.workflow-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.workflow-btn {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    padding: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    text-align: left;
+}
+
+.workflow-btn:hover, .workflow-btn.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 30px rgba(255, 0, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+.workflow-btn i {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+}
+
+.btn-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.btn-content p {
+    color: #666;
+    margin: 0;
+}
+
+.workflow-content {
+    display: none;
+    padding: 60px 0;
+}
+
+.workflow-content.active {
+    display: block;
+}
+
+.workflow-header {
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative;
+}
+
+.workflow-header h2 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: var(--dark-color);
+}
+
+.workflow-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.time-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+}
+
+.time-badge.advanced {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+}
+
+.steps-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.step {
+    display: flex;
+    margin-bottom: 60px;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.step:nth-child(even) {
+    flex-direction: row-reverse;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, var(--primary-color), #CC0000);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    flex-shrink: 0;
+    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+}
+
+.steps-container.advanced .step-number {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+}
+
+.step-content {
+    flex: 1;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f0f0f0;
+}
+
+.step-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-content h3 i {
+    color: var(--primary-color);
+}
+
+.step-content p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.step-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.feature-tag {
+    background: linear-gradient(45deg, var(--primary-color), #CC0000);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.steps-container.advanced .feature-tag {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+}
+
+.step-visual {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px dashed #dee2e6;
+}
+
+/* Visual Elements Styling */
+.mock-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mock-input {
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+}
+
+.mock-input.subtitle {
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.char-count {
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.style-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.slider {
+    width: 100px;
+    height: 6px;
+    background: #ddd;
+    border-radius: 3px;
+    position: relative;
+}
+
+.slider::after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    position: absolute;
+    top: -6px;
+    left: 60%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.style-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.style-btn {
+    width: 35px;
+    height: 35px;
+    border: 2px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.style-btn.active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: white;
+}
+
+.color-palette {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.color-option {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.color-option.active {
+    border-color: #333;
+    transform: scale(1.1);
+}
+
+.thumbnail-preview {
+    background: var(--primary-color);
+    aspect-ratio: 16/9;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 20px;
+}
+
+.preview-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.preview-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.download-demo {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.download-demo:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+}
+
+.download-demo.advanced {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+}
+
+.canvas-mockup {
+    position: relative;
+    aspect-ratio: 16/9;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.canvas-bg {
+    width: 100%;
+    height: 100%;
+    background: var(--primary-color);
+}
+
+.canvas-bg.gradient {
+    background: linear-gradient(135deg, #ff0000ef, #990000ef);
+}
+
+.template-selector {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+}
+
+.template-thumb {
+    width: 30px;
+    height: 20px;
+    background: #333;
+    border-radius: 3px;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.template-thumb.active {
+    border-color: white;
+}
+
+.toolbar-mockup {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.tool-btn {
+    width: 50px;
+    height: 50px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tool-btn.active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: white;
+}
+
+.drag-demo {
+    position: relative;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.element-box {
+    background: var(--primary-color);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    position: relative;
+    cursor: move;
+}
+
+.element-box.selected {
+    outline: 2px dashed #333;
+    outline-offset: 5px;
+}
+
+.resize-handle {
+    width: 12px;
+    height: 12px;
+    background: white;
+    border: 2px solid var(--primary-color);
+    position: absolute;
+    right: -6px;
+    bottom: -6px;
+    border-radius: 50%;
+    cursor: nwse-resize;
+}
+
+.properties-panel {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.properties-panel h4 {
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 5px;
+}
+
+.property-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.color-picker {
+    width: 30px;
+    height: 30px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    border: 2px solid #ddd;
+}
+
+.comparison-workflow {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 80px 0;
+}
+
+.comparison-workflow h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+    color: var(--dark-color);
+}
+
+.mode-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.mode-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.mode-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.mode-header {
+    padding: 30px;
+    text-align: center;
+    color: white;
+}
+
+.mode-card.simple .mode-header {
+    background: linear-gradient(135deg, var(--primary-color), #CC0000);
+}
+
+.mode-card.advanced .mode-header {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+}
+
+.mode-header i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.mode-header h3 {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.mode-body {
+    padding: 30px;
+}
+
+.time-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f8f9fa;
+    padding: 12px 20px;
+    border-radius: 25px;
+    margin-bottom: 25px;
+    font-weight: 600;
+    color: var(--primary-color);
+    justify-content: center;
+}
+
+.mode-body h4 {
+    color: #333;
+    margin-bottom: 15px;
+    margin-top: 25px;
+    font-size: 1.2rem;
+}
+
+.mode-body ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.mode-body li {
+    padding: 8px 0;
+    color: #555;
+    position: relative;
+    padding-left: 25px;
+}
+
+.mode-body li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.mode-footer {
+    padding: 30px;
+    background: #f8f9fa;
+}
+
+.mode-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.mode-cta.simple {
+    background: var(--primary-color);
+    color: white;
+}
+
+.mode-cta.advanced {
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    color: white;
+}
+
+.mode-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.tips-section {
+    padding: 80px 0;
+}
+
+.tips-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+    color: var(--dark-color);
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.tip-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.tip-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(45deg, var(--primary-color), #cc0000ee);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto 20px;
+}
+
+.tip-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.tip-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.final-cta {
+    background: linear-gradient(135deg, var(--primary-color), #CC0000);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.final-cta h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.final-cta p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.cta-button.primary {
+    background: white;
+    color: var(--primary-color);
+}
+
+.cta-button.primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);
+}
+
+.cta-button.secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+.cta-button.secondary:hover {
+    background: white;
+    color: var(--primary-color);
+    transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+    .how-it-works-hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .workflow-toggle {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .workflow-btn {
+        text-align: center;
+        flex-direction: column;
+    }
+    
+    .step {
+        flex-direction: column !important;
+        text-align: center;
+    }
+    
+    .step-number {
+        margin: 0 auto 20px;
+    }
+    
+    .mode-comparison {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .tips-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .workflow-header h2 {
+        font-size: 2rem;
+    }
+    
+    .comparison-workflow h2,
+    .tips-section h2,
+    .final-cta h2 {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const workflowButtons = document.querySelectorAll('.workflow-btn');
+    const workflowContents = document.querySelectorAll('.workflow-content');
+    
+    workflowButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const workflow = this.dataset.workflow;
+            
+            // Update button states
+            workflowButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update content visibility
+            workflowContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(workflow + '-workflow').classList.add('active');
+        });
+    });
+});
+</script>
+
+{% endblock %}

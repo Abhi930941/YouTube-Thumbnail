@@ -1,0 +1,999 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="generator">
+    <div class="container">
+        <div class="generator-header">
+            <h1><i class="fas fa-magic"></i> Thumbnail Generator</h1>
+            <p class="subtitle">Create a custom thumbnail for your YouTube video</p>
+            <button id="toggle-editor-mode" class="mode-toggle">
+                <i class="fas fa-rocket"></i>
+                <span class="mode-text">Switch to Advanced Mode</span>
+            </button>
+        </div>
+        
+        <!-- Simple Mode (Original Features) -->
+        <div id="simple-mode" class="generator-container">
+            <div class="editor-panel">
+                <form id="thumbnail-form" enctype="multipart/form-data">
+                    <div class="form-section">
+                        <h3><i class="fas fa-heading"></i> Text Content</h3>
+                        <div class="form-group">
+                            <label for="title">Main Title</label>
+                            <input type="text" id="title" name="title" value="YOUR TITLE HERE" maxlength="50">
+                            <div class="character-count"><span id="title-count">0</span>/50</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subtitle">Subtitle</label>
+                            <input type="text" id="subtitle" name="subtitle" value="Your subtitle text" maxlength="80">
+                            <div class="character-count"><span id="subtitle-count">0</span>/80</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3><i class="fas fa-text-height"></i> Text Styling</h3>
+                        <div class="form-group">
+                            <label for="title-size">Title Size: <span id="title-size-value">48</span>px</label>
+                            <input type="range" id="title-size" name="title_size" min="24" max="72" value="48" step="2">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subtitle-size">Subtitle Size: <span id="subtitle-size-value">24</span>px</label>
+                            <input type="range" id="subtitle-size" name="subtitle_size" min="16" max="36" value="24" step="2">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Text Style</label>
+                            <div class="style-options">
+                                <button type="button" id="bold-btn" class="style-btn" data-style="bold">
+                                    <i class="fas fa-bold"></i>
+                                </button>
+                                <button type="button" id="italic-btn" class="style-btn" data-style="italic">
+                                    <i class="fas fa-italic"></i>
+                                </button>
+                                <button type="button" id="underline-btn" class="style-btn" data-style="underline">
+                                    <i class="fas fa-underline"></i>
+                                </button>
+                                <input type="hidden" id="text-styles" name="text_styles" value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="text-color">Text Color</label>
+                            <div class="color-picker-container">
+                                <input type="color" id="text-color" name="text_color" value="#FFFFFF">
+                                <span id="text-color-value">#FFFFFF</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-adjust"></i> Text Shadow</h3>
+                        <div class="form-group">
+                            <label><input type="checkbox" id="text-shadow-toggle" name="shadow_enabled"> Enable Text Shadow</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="shadow-color">Shadow Color</label>
+                            <input type="color" id="shadow-color" name="shadow_color" value="#000000">
+                        </div>
+                        <div class="form-group">
+                            <label for="shadow-offset-x">Shadow X Offset</label>
+                            <input type="number" id="shadow-offset-x" name="shadow_offset_x" value="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="shadow-offset-y">Shadow Y Offset</label>
+                            <input type="number" id="shadow-offset-y" name="shadow_offset_y" value="2">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-image"></i> Background</h3>
+                        <div class="form-group">
+                            <label>Background Type</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="bg_type" value="color" checked>
+                                    <span class="radio-custom"></span>
+                                    Color
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="bg_type" value="image">
+                                    <span class="radio-custom"></span>
+                                    Image
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" id="bg-color-group">
+                            <label for="bg-color">Background Color</label>
+                            <div class="color-picker-container">
+                                <input type="color" id="bg-color" name="bg_color" value="#FF0000">
+                                <span id="bg-color-value">#FF0000</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" id="bg-image-group" style="display: none;">
+                            <label for="bg-image">Upload Image</label>
+                            <div class="file-upload">
+                                <input type="file" id="bg-image" name="bg_image" accept="image/*">
+                                <label for="bg-image" class="file-upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Choose an image</span>
+                                </label>
+                                <div id="file-name" class="file-name">No file selected</div>
+                            </div>
+                            <p class="file-hint">Recommended size: 1280x720 pixels</p>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-palette"></i> Quick Templates</h3>
+                        <div class="template-buttons">
+                            <button type="button" class="template-btn" data-bg="#FF0000" data-text="#FFFFFF">
+                                <div class="template-preview" style="background: #FF0000;"></div>
+                                <span>Red</span>
+                            </button>
+                            <button type="button" class="template-btn" data-bg="#000000" data-text="#FFFFFF">
+                                <div class="template-preview" style="background: #000000;"></div>
+                                <span>Black</span>
+                            </button>
+                            <button type="button" class="template-btn" data-bg="#FFCC00" data-text="#000000">
+                                <div class="template-preview" style="background: #FFCC00;"></div>
+                                <span>Yellow</span>
+                            </button>
+                            <button type="button" class="template-btn" data-bg="#FFFFFF" data-text="#000000">
+                                <div class="template-preview" style="background: #FFFFFF;"></div>
+                                <span>White</span>
+                            </button>
+                            <button type="button" class="template-btn" data-bg="#0066FF" data-text="#FFFFFF">
+                                <div class="template-preview" style="background: #0066FF;"></div>
+                                <span>Blue</span>
+                            </button>
+                            <button type="button" class="template-btn" data-bg="#00CC66" data-text="#FFFFFF">
+                                <div class="template-preview" style="background: #00CC66;"></div>
+                                <span>Green</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="preview-panel">
+                <div class="preview-container">
+                    <h3><i class="fas fa-eye"></i> Live Preview</h3>
+                    <div class="preview-fixed-container">
+                        <div class="thumbnail-preview" id="thumbnail-preview">
+                            <h2 id="preview-title">YOUR TITLE HERE</h2>
+                            <p id="preview-subtitle">Your subtitle text</p>
+                        </div>
+                    </div>
+                    
+                    <button id="download-btn" class="download-button">
+                        <i class="fas fa-download"></i> Download Thumbnail
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Advanced Mode (New Features) -->
+        <div id="advanced-mode" class="advanced-editor" style="display:none;">
+            <div class="editor-toolbar">
+                <button id="add-text"><i class="fas fa-font"></i> Add Text</button>
+                <button id="add-shape"><i class="fas fa-square"></i> Add Shape</button>
+                <button id="add-icon"><i class="fas fa-icons"></i> Add Icon</button>
+                <button id="upload-image"><i class="fas fa-image"></i> Upload Image</button>
+                <button id="templates-btn"><i class="fas fa-clone"></i> Templates</button>
+            </div>
+            
+            <div class="editor-workspace">
+                <div class="canvas-container" id="thumbnail-canvas">
+                    <div class="thumbnail-preview" id="advanced-preview" style="background-color: #FF0000;">
+                        <h2 id="advanced-title" style="position: absolute; top: 150px; left: 50%; transform: translateX(-50%); color: #FFFFFF; font-size: 48px;">YOUR TITLE HERE</h2>
+                        <p id="advanced-subtitle" style="position: absolute; top: 250px; left: 50%; transform: translateX(-50%); color: #FFFFFF; font-size: 24px;">Your subtitle text</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="editor-properties">
+                <h3><i class="fas fa-sliders-h"></i> Properties</h3>
+                <div id="element-properties">
+                    <p>Select an element to edit its properties</p>
+                </div>
+                
+                <button id="advanced-download-btn" class="download-button">
+                    <i class="fas fa-download"></i> Download Thumbnail
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Templates Modal -->
+<div id="templates-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Choose a Template</h2>
+        <div class="template-gallery">
+            <!-- Templates will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Add this modal to your generator.html -->
+<div id="shape-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Select a Shape</h2>
+        <div class="shape-selector">
+            <!-- Shapes will be loaded here by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<style>
+/* Enhanced Generator Styling */
+:root {
+    --primary: #FF0000;
+    --primary-dark: #CC0000;
+    --primary-light: #FF4444;
+    --dark: #1a1a1a;
+    --gray-900: #111827;
+    --gray-800: #1f2937;
+    --gray-700: #374151;
+    --gray-600: #4b5563;
+    --gray-500: #6b7280;
+    --gray-400: #9ca3af;
+    --gray-300: #d1d5db;
+    --gray-200: #e5e7eb;
+    --gray-100: #f3f4f6;
+    --white: #ffffff;
+    --gradient-primary: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Enhanced Generator Section */
+.generator {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.generator-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.generator-header::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+}
+
+.generator-header h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: slideInDown 0.8s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.generator-header .subtitle {
+    font-size: 1.25rem;
+    color: var(--gray-600);
+    margin-bottom: 2rem;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mode-toggle {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 3rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 auto;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+.mode-toggle:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-2xl);
+    background: linear-gradient(135deg, #FF2020 0%, #DD0000 100%);
+}
+
+/* Enhanced Generator Container */
+.generator-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    animation: fadeInUp 0.8s ease-out 0.6s both;
+}
+
+.editor-panel, .preview-panel {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--gray-200);
+    transition: all 0.3s ease;
+}
+
+.editor-panel:hover, .preview-panel:hover {
+    box-shadow: var(--shadow-2xl);
+    border-color: var(--primary);
+}
+
+/* Enhanced Form Sections */
+.form-section {
+    background: var(--gray-50);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--gray-200);
+    transition: all 0.3s ease;
+}
+
+.form-section:hover {
+    background: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.form-section h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--gray-900);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary);
+}
+
+.editor-properties h3 i {
+    color: var(--primary);
+}
+
+/* Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: var(--shadow-2xl);
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-content h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--gray-900);
+    text-align: center;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.5rem;
+}
+
+.close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close:hover {
+    color: var(--primary);
+    background: var(--gray-100);
+    transform: scale(1.1);
+}
+
+.template-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.shape-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+/* Fixed Preview Container */
+.preview-fixed-container {
+    position: relative;
+    width: 100%;
+    height: 280px;/*Fixed height for 16:9 aspect ratio (720px scaled down) */
+    overflow: hidden;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+}
+
+.thumbnail-preview {
+    background: var(--primary);
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 3px solid white;
+    transform-origin: center center;
+}
+
+/* Ensure the preview panel itself doesn't scroll */
+.preview-panel {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    overflow: visible;
+}
+
+.preview-container {
+    position: relative;
+    overflow: visible;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .generator-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .preview-panel {
+        order: -1;
+    }
+    
+    .preview-fixed-container {
+        height: 360px;
+    }
+}
+
+@media (max-width: 768px) {
+    .generator {
+        padding: 1rem 0;
+    }
+    
+    .generator-container {
+        padding: 0 1rem;
+    }
+    
+    .editor-panel, .preview-panel {
+        padding: 1.5rem;
+    }
+    
+    .generator-header h1 {
+        font-size: 2rem;
+    }
+    
+    .mode-toggle {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .template-buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .editor-toolbar {
+        flex-direction: column;
+    }
+    
+    .editor-toolbar button {
+        justify-content: center;
+    }
+    
+    .form-section {
+        padding: 1rem;
+    }
+    
+    .preview-fixed-container {
+        height: 300px;
+    }
+    
+    #preview-title {
+        font-size: 1.8rem;
+    }
+    
+    #preview-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .radio-group {
+        flex-direction: column;
+    }
+    
+    .style-options {
+        justify-content: center;
+    }
+    
+    .template-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .preview-fixed-container {
+        height: 250px;
+    }
+    
+    #preview-title {
+        font-size: 1.5rem;
+    }
+    
+    #preview-subtitle {
+        font-size: 0.9rem;
+    }
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--gray-200);
+    border-top: 3px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Success States */
+.success {
+    border-color: #10B981 !important;
+    background-color: #D1FAE5 !important;
+}
+
+.error {
+    border-color: #EF4444 !important;
+    background-color: #FEE2E2 !important;
+}
+
+/* Hover Effects */
+.form-group:hover label {
+    color: var(--primary);
+}
+
+.template-btn:hover span {
+    color: var(--primary);
+}
+
+/* Focus States */
+.form-group input:focus + .character-count {
+    color: var(--primary);
+}
+
+/* Animation Delays for Staggered Effect */
+.form-section:nth-child(1) { animation: fadeInLeft 0.8s ease-out 0.1s both; }
+.form-section:nth-child(2) { animation: fadeInLeft 0.8s ease-out 0.2s both; }
+.form-section:nth-child(3) { animation: fadeInLeft 0.8s ease-out 0.3s both; }
+.form-section:nth-child(4) { animation: fadeInLeft 0.8s ease-out 0.4s both; }
+.form-section:nth-child(5) { animation: fadeInLeft 0.8s ease-out 0.5s both; }
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Preview Panel Animation */
+.preview-panel {
+    animation: fadeInRight 0.8s ease-out 0.6s both;
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+</style>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<script>
+// Enhanced JavaScript functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Character count functionality
+    const titleInput = document.getElementById('title');
+    const subtitleInput = document.getElementById('subtitle');
+    const titleCount = document.getElementById('title-count');
+    const subtitleCount = document.getElementById('subtitle-count');
+
+    function updateCharCount(input, counter) {
+        const count = input.value.length;
+        counter.textContent = count;
+        
+        // Add visual feedback
+        const maxLength = input.getAttribute('maxlength');
+        const percentage = (count / maxLength) * 100;
+        
+        if (percentage > 90) {
+            counter.style.color = '#EF4444';
+        } else if (percentage > 75) {
+            counter.style.color = '#F59E0B';
+        } else {
+            counter.style.color = 'var(--primary)';
+        }
+    }
+
+    titleInput?.addEventListener('input', () => updateCharCount(titleInput, titleCount));
+    subtitleInput?.addEventListener('input', () => updateCharCount(subtitleInput, subtitleCount));
+
+    // Initialize character counts
+    if (titleInput && titleCount) updateCharCount(titleInput, titleCount);
+    if (subtitleInput && subtitleCount) updateCharCount(subtitleInput, subtitleCount);
+
+    // Range slider value display
+    const titleSizeSlider = document.getElementById('title-size');
+    const titleSizeValue = document.getElementById('title-size-value');
+    const subtitleSizeSlider = document.getElementById('subtitle-size');
+    const subtitleSizeValue = document.getElementById('subtitle-size-value');
+
+    titleSizeSlider?.addEventListener('input', () => {
+        titleSizeValue.textContent = titleSizeSlider.value;
+    });
+
+    subtitleSizeSlider?.addEventListener('input', () => {
+        subtitleSizeValue.textContent = subtitleSizeSlider.value;
+    });
+
+    // Color picker value display
+    const textColorPicker = document.getElementById('text-color');
+    const textColorValue = document.getElementById('text-color-value');
+    const bgColorPicker = document.getElementById('bg-color');
+    const bgColorValue = document.getElementById('bg-color-value');
+
+    textColorPicker?.addEventListener('input', () => {
+        textColorValue.textContent = textColorPicker.value.toUpperCase();
+    });
+
+    bgColorPicker?.addEventListener('input', () => {
+        bgColorValue.textContent = bgColorPicker.value.toUpperCase();
+    });
+
+    // Style button functionality
+    const styleButtons = document.querySelectorAll('.style-btn');
+    styleButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            this.classList.toggle('active');
+            
+            // Add click animation
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+    });
+
+    // Template button functionality
+    const templateButtons = document.querySelectorAll('.template-btn');
+    templateButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all templates
+            templateButtons.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked template
+            this.classList.add('active');
+            
+            // Apply template colors
+            const bgColor = this.dataset.bg;
+            const textColor = this.dataset.text;
+            
+            if (bgColorPicker) bgColorPicker.value = bgColor;
+            if (textColorPicker) textColorPicker.value = textColor;
+            if (bgColorValue) bgColorValue.textContent = bgColor;
+            if (textColorValue) textColorValue.textContent = textColor;
+            
+            // Add success animation
+            this.style.transform = 'scale(1.05)';
+            this.style.borderColor = 'var(--primary)';
+            setTimeout(() => {
+                this.style.transform = '';
+                this.style.borderColor = '';
+            }, 300);
+        });
+    });
+
+    // File upload functionality
+    const fileInput = document.getElementById('bg-image');
+    const fileName = document.getElementById('file-name');
+    
+    fileInput?.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            fileName.textContent = this.files[0].name;
+            fileName.style.color = 'var(--primary)';
+        } else {
+            fileName.textContent = 'No file selected';
+            fileName.style.color = '';
+        }
+    });
+
+    // Radio button functionality
+    const radioInputs = document.querySelectorAll('input[name="bg_type"]');
+    const bgColorGroup = document.getElementById('bg-color-group');
+    const bgImageGroup = document.getElementById('bg-image-group');
+
+    radioInputs.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'color') {
+                bgColorGroup.style.display = 'block';
+                bgImageGroup.style.display = 'none';
+            } else {
+                bgColorGroup.style.display = 'none';
+                bgImageGroup.style.display = 'block';
+            }
+        });
+    });
+
+    // Mode toggle functionality
+    const modeToggle = document.getElementById('toggle-editor-mode');
+    const simpleMode = document.getElementById('simple-mode');
+    const advancedMode = document.getElementById('advanced-mode');
+    let isAdvanced = false;
+
+    modeToggle?.addEventListener('click', function() {
+        isAdvanced = !isAdvanced;
+        
+        if (isAdvanced) {
+            simpleMode.style.display = 'none';
+            advancedMode.style.display = 'block';
+            this.innerHTML = '<i class="fas fa-bolt"></i><span class="mode-text">Switch to Simple Mode</span>';
+        } else {
+            simpleMode.style.display = 'block';
+            advancedMode.style.display = 'none';
+            this.innerHTML = '<i class="fas fa-rocket"></i><span class="mode-text">Switch to Advanced Mode</span>';
+        }
+        
+        // Add transition effect
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            this.style.transform = '';
+        }, 150);
+    });
+
+    // Download button enhancement
+    const downloadButtons = document.querySelectorAll('.download-button');
+    downloadButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Add loading state
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            this.classList.add('loading');
+            
+            // Simulate processing time
+            setTimeout(() => {
+                this.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
+                this.style.background = '#10B981';
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.style.background = '';
+                    this.classList.remove('loading');
+                }, 2000);
+            }, 1500);
+        });
+    });
+
+    // Modal functionality
+    const modals = document.querySelectorAll('.modal');
+    const closeButtons = document.querySelectorAll('.close');
+
+    closeButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('.modal').style.display = 'none';
+        });
+    });
+
+    window.addEventListener('click', function(e) {
+        modals.forEach(modal => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+    // Add smooth scrolling for better UX
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    // Initialize tooltips for better user guidance
+    const tooltipElements = document.querySelectorAll('[title]');
+    tooltipElements.forEach(el => {
+        el.addEventListener('mouseenter', function() {
+            this.style.position = 'relative';
+        });
+    });
+    
+    // Text scaling for fixed preview container
+    function scaleTextToFit() {
+        const preview = document.getElementById('thumbnail-preview');
+        const title = document.getElementById('preview-title');
+        const subtitle = document.getElementById('preview-subtitle');
+        
+        if (!preview || !title || !subtitle) return;
+        
+        // Reset font sizes to original values
+        const titleSize = document.getElementById('title-size').value;
+        const subtitleSize = document.getElementById('subtitle-size').value;
+        
+        title.style.fontSize = `${titleSize}px`;
+        subtitle.style.fontSize = `${subtitleSize}px`;
+        
+        // Get container dimensions
+        const containerWidth = preview.offsetWidth - 40; // Account for padding
+        const containerHeight = preview.offsetHeight - 40;
+        
+        // Scale title if needed
+        let currentTitleSize = parseInt(titleSize);
+        while (title.offsetWidth > containerWidth && currentTitleSize > 20) {
+            currentTitleSize -= 2;
+            title.style.fontSize = `${currentTitleSize}px`;
+        }
+        
+        // Scale subtitle if needed
+        let currentSubtitleSize = parseInt(subtitleSize);
+        while (subtitle.offsetWidth > containerWidth && currentSubtitleSize > 12) {
+            currentSubtitleSize -= 1;
+            subtitle.style.fontSize = `${currentSubtitleSize}px`;
+        }
+        
+        // Adjust vertical positioning if text is too tall
+        const totalTextHeight = title.offsetHeight + subtitle.offsetHeight + 20;
+        if (totalTextHeight > containerHeight) {
+            const scaleFactor = containerHeight / totalTextHeight;
+            title.style.fontSize = `${Math.max(20, parseInt(title.style.fontSize) * scaleFactor)}px`;
+            subtitle.style.fontSize = `${Math.max(12, parseInt(subtitle.style.fontSize) * scaleFactor)}px`;
+        }
+    }
+    
+    // Call the scaling function on window resize and after DOM updates
+    window.addEventListener('resize', scaleTextToFit);
+    
+    // Apply scaling after a short delay to ensure DOM is fully loaded
+    setTimeout(scaleTextToFit, 500);
+    
+    // Also apply scaling when any style changes that might affect text size
+    const styleInputs = document.querySelectorAll('input[type="range"], input[type="color"], input[type="text"], input[type="checkbox"]');
+    styleInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            setTimeout(scaleTextToFit, 50);
+        });
+    });
+});
+</script>
+
+{% endblock %}s

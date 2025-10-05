@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube ThumbnailPro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF0000;
+            --primary-dark: #CC0000;
+            --primary-light: #FF4444;
+            --dark: #1a1a1a;
+            --gray-900: #111827;
+            --gray-800: #1f2937;
+            --gray-700: #374151;
+            --gray-600: #4b5563;
+            --gray-500: #6b7280;
+            --gray-400: #9ca3af;
+            --gray-300: #d1d5db;
+            --gray-200: #e5e7eb;
+            --gray-100: #f3f4f6;
+            --white: #ffffff;
+            --gradient-primary: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: var(--white);
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Enhanced Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(26, 26, 26, 0.98);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.highlight {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-link.highlight:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* FIXED: Mobile menu toggle styling */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* FIXED: Mobile navigation menu */
+        .mobile-menu {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 26, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 0 2rem;
+        }
+
+        .mobile-nav-link {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .mobile-nav-link:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-nav-link:hover {
+            color: var(--primary);
+            padding-left: 1rem;
+        }
+
+        .mobile-nav-link.highlight {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+            padding: 1rem;
+            border-bottom: none;
+        }
+
+        .mobile-nav-link.highlight:hover {
+            padding-left: 1rem;
+            color: white;
+        }
+
+        /* Enhanced Footer */
+        .footer {
+            background: var(--gray-900);
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 0;
+        }
+
+        .footer .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .social-link:hover::before {
+            left: 100%;
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .social-link.facebook:hover {
+            background: #1877f2;
+        }
+
+        .social-link.instagram:hover {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        }
+
+        .social-link.linkedin:hover {
+            background: #0077b5;
+        }
+
+        .social-link.github:hover {
+            background: #333;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Page content padding to account for fixed navbar */
+        main {
+            padding-top: 80px;
+        }
+
+        /* FIXED: Mobile Responsive Design */
+        @media (max-width: 768px) {
+            .navbar .container {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo i {
+                font-size: 1.75rem;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 1.5rem;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+
+            main {
+                padding-top: 70px;
+            }
+
+            .mobile-menu {
+                top: 70px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar .container {
+                padding: 0 0.75rem;
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            .logo i {
+                font-size: 1.5rem;
+            }
+
+            .mobile-nav-links {
+                padding: 0 1rem;
+            }
+
+            main {
+                padding-top: 65px;
+            }
+
+            .mobile-menu {
+                top: 65px;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* FIXED: Menu overlay for mobile */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fab fa-youtube"></i> 
+                <span>ThumbnailPro</span>
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <div class="nav-links">
+                <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                <a href="/how-it-works" class="nav-link"><i class="fas fa-question-circle"></i> How It Works</a>
+                <a href="/features" class="nav-link"><i class="fas fa-star"></i> Features</a>
+                <a href="/generator" class="nav-link highlight"><i class="fas fa-magic"></i> Get Started</a>
+            </div>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                <i class="fas fa-bars" id="menu-icon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- FIXED: Mobile Navigation Menu -->
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-nav-links">
+            <a href="/" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+            <a href="/how-it-works" class="mobile-nav-link"><i class="fas fa-question-circle"></i> How It Works</a>
+            <a href="/features" class="mobile-nav-link"><i class="fas fa-star"></i> Features</a>
+            <a href="/generator" class="mobile-nav-link highlight"><i class="fas fa-magic"></i> Get Started</a>
+        </div>
+    </div>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ThumbnailPro</h3>
+                    <p>Create stunning YouTube thumbnails that get more clicks and views. Professional design made simple.</p>
+                   
+                </div>
+
+            
+                 <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/">Home</a>
+                    <a href="/generator">Generator</a>
+                    <a href="/features">Features</a>
+                    <a href="/how-it-works">How It Works</a>
+                </div>
+                
+        
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p><i class="fas fa-envelope"></i> abhishek242443@gmail.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> India</p>
+                </div>
+                    <div class="social-links">
+                        
+                        <a href="https://www.facebook.com/share/1A39yLUvhp/" target="_blank" rel="noopener noreferrer" class="social-link facebook" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/sahaniabhisek311?igsh=MW1nNmE1MGpkdnY3ZA==" target="_blank" rel="noopener noreferrer" class="social-link instagram" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/abhishek-sahani-447851341" target="_blank" rel="noopener noreferrer" class="social-link linkedin" title="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; YouTube ThumbnailPro by Abhishek Sahani. All rights reserved. Made with ❤️ for YouTube creators.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Enhanced JavaScript for interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // FIXED: Mobile menu functionality
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuOverlay = document.getElementById('menu-overlay');
+            const menuIcon = document.getElementById('menu-icon');
+            let isMenuOpen = false;
+
+            function toggleMobileMenu() {
+                isMenuOpen = !isMenuOpen;
+                
+                if (isMenuOpen) {
+                    mobileMenu.classList.add('active');
+                    menuOverlay.classList.add('active');
+                    menuIcon.className = 'fas fa-times';
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    mobileMenu.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                    menuIcon.className = 'fas fa-bars';
+                    document.body.style.overflow = '';
+                }
+            }
+
+            function closeMobileMenu() {
+                if (isMenuOpen) {
+                    isMenuOpen = false;
+                    mobileMenu.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                    menuIcon.className = 'fas fa-bars';
+                    document.body.style.overflow = '';
+                }
+            }
+
+            // Mobile menu toggle click
+            mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+
+            // Close menu when overlay is clicked
+            menuOverlay.addEventListener('click', closeMobileMenu);
+
+            // Close menu when a mobile nav link is clicked
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+
+            // Close menu when escape key is pressed
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isMenuOpen) {
+                    closeMobileMenu();
+                }
+            });
+
+            // FIXED: Close mobile menu on window resize to desktop size
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768 && isMenuOpen) {
+                    closeMobileMenu();
+                }
+            });
+
+            // Navbar scroll effect
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 100) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Add loading animation to buttons
+            document.querySelectorAll('.cta-button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (this.href && this.href.includes('/generator')) {
+                        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
