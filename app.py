@@ -50,9 +50,10 @@ def home():
 
 @app.route('/generator')
 def generator():
-    # Check if template parameter is provided
+    # Check if template or mode parameter is provided
     template_param = request.args.get('template', '')
-    return render_template('generator.html', template_param=template_param)
+    mode_param = request.args.get('mode', '')
+    return render_template('generator.html', template_param=template_param, mode_param=mode_param)
 
 @app.route('/features')
 def features():
@@ -60,7 +61,11 @@ def features():
 
 @app.route('/how-it-works')
 def how_it_works():
-    return render_template('how-it-works.html')
+    try:
+        return render_template('how-it-works.html')
+    except Exception as e:
+        logger.error(f"Error rendering how-it-works page: {e}", exc_info=True)
+        return f"Error loading page: {str(e)}", 500
 
 @app.route('/generate-thumbnail', methods=['POST'])
 def generate_thumbnail():
@@ -242,6 +247,18 @@ def apply_filter():
     except Exception as e:
         logger.error(f"Filter error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
+
+# FIXED: Add error handler for 500 errors
+@app.errorhandler(500)
+def internal_error(error):
+    logger.error(f"Internal server error: {error}")
+    return "Internal Server Error - Please check the server logs", 500
+
+# FIXED: Add error handler for 404 errors
+@app.errorhandler(404)
+def not_found_error(error):
+    logger.error(f"Page not found: {error}")
+    return "Page Not Found", 404
 
 if __name__ == '__main__':
     app.run(debug=True)
