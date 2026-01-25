@@ -31,6 +31,15 @@
             --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
+        @media (max-width: 768px) {
+            :root {
+                --primary: #FF6B6B;
+                --primary-dark: #E85555;
+                --primary-light: #FF8787;
+                --gradient-primary: linear-gradient(135deg, #FF6B6B 0%, #E85555 100%);
+            }
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
@@ -41,7 +50,6 @@
             padding: 0;
         }
 
-        /* Enhanced Navigation */
         .navbar {
             position: fixed;
             top: 0;
@@ -121,7 +129,6 @@
             box-shadow: var(--shadow-lg);
         }
 
-        /* FIXED: Mobile menu toggle styling */
         .mobile-menu-toggle {
             display: none;
             background: none;
@@ -138,7 +145,6 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* FIXED: Mobile navigation menu */
         .mobile-menu {
             position: fixed;
             top: 80px;
@@ -204,7 +210,6 @@
             color: white;
         }
 
-        /* Enhanced Footer */
         .footer {
             background: var(--gray-900);
             color: white;
@@ -286,20 +291,8 @@
             box-shadow: var(--shadow-lg);
         }
 
-        .social-link.facebook:hover {
-            background: #1877f2;
-        }
-
-        .social-link.instagram:hover {
-            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-        }
-
         .social-link.linkedin:hover {
             background: #0077b5;
-        }
-
-        .social-link.github:hover {
-            background: #333;
         }
 
         .footer-bottom {
@@ -309,12 +302,10 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        /* Page content padding to account for fixed navbar */
         main {
             padding-top: 80px;
         }
 
-        /* FIXED: Mobile Responsive Design */
         @media (max-width: 768px) {
             .navbar .container {
                 padding: 0 1rem;
@@ -345,6 +336,7 @@
             .social-links {
                 justify-content: center;
             }
+                
 
             main {
                 padding-top: 70px;
@@ -381,7 +373,6 @@
             }
         }
 
-        /* Loading Animation */
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -391,7 +382,6 @@
             animation: pulse 2s infinite;
         }
 
-        /* Scroll animations */
         .fade-in {
             opacity: 0;
             transform: translateY(30px);
@@ -403,7 +393,6 @@
             transform: translateY(0);
         }
 
-        /* FIXED: Menu overlay for mobile */
         .menu-overlay {
             position: fixed;
             top: 0;
@@ -421,10 +410,38 @@
             opacity: 1;
             visibility: visible;
         }
+
+        .contact-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;   /* DESKTOP */
+            gap: 0.5rem;
+        }
+
+        .contact-location {
+        margin: 0;
+        }
+
+        .contact-section .social-links {
+            margin-top: 0.25rem;
+            justify-content: flex-start;
+        }
+
+        @media (max-width: 768px) {
+            .contact-section {
+             align-items: center;
+            text-align: center;
+        }
+
+            .contact-section .social-links {
+            justify-content: center;
+        }
+    }
+
+        
     </style>
 </head>
 <body>
-    <!-- Enhanced Navigation -->
     <nav class="navbar" id="navbar">
         <div class="container">
             <a href="/" class="logo">
@@ -432,7 +449,6 @@
                 <span>ThumbnailPro</span>
             </a>
             
-            <!-- Desktop Navigation -->
             <div class="nav-links">
                 <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
                 <a href="/how-it-works" class="nav-link"><i class="fas fa-question-circle"></i> How It Works</a>
@@ -440,14 +456,12 @@
                 <a href="/generator" class="nav-link highlight"><i class="fas fa-magic"></i> Get Started</a>
             </div>
             
-            <!-- Mobile Menu Toggle -->
             <button class="mobile-menu-toggle" id="mobile-menu-toggle">
                 <i class="fas fa-bars" id="menu-icon"></i>
             </button>
         </div>
     </nav>
 
-    <!-- FIXED: Mobile Navigation Menu -->
     <div class="menu-overlay" id="menu-overlay"></div>
     <div class="mobile-menu" id="mobile-menu">
         <div class="mobile-nav-links">
@@ -462,57 +476,48 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Enhanced Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>ThumbnailPro</h3>
                     <p>Create stunning YouTube thumbnails that get more clicks and views. Professional design made simple.</p>
-                   
                 </div>
 
-            
-                 <div class="footer-section">
+                <div class="footer-section">
                     <h3>Quick Links</h3>
                     <a href="/">Home</a>
                     <a href="/generator">Generator</a>
                     <a href="/features">Features</a>
                     <a href="/how-it-works">How It Works</a>
                 </div>
-                
         
-                <div class="footer-section">
+               <div class="footer-section contact-section">
                     <h3>Contact</h3>
-                    <p><i class="fas fa-envelope"></i> abhishek242443@gmail.com</p>
-                    <p><i class="fas fa-map-marker-alt"></i> India</p>
-                </div>
+                    <p class="contact-location">
+                    <i class="fas fa-map-marker-alt"></i> India</p>
                     <div class="social-links">
-                        
-                        <a href="https://www.facebook.com/share/1A39yLUvhp/" target="_blank" rel="noopener noreferrer" class="social-link facebook" title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.instagram.com/sahaniabhisek311?igsh=MW1nNmE1MGpkdnY3ZA==" target="_blank" rel="noopener noreferrer" class="social-link instagram" title="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://www.linkedin.com/in/abhishek-sahani-447851341" target="_blank" rel="noopener noreferrer" class="social-link linkedin" title="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
+                    <a href="mailto:abhishek242443@gmail.com" class="social-link gmail">
+                    <i class="fas fa-envelope"></i>
+                     </a>
+                    <a href="https://www.linkedin.com/in/abhishek-sahani-447851341"
+                        class="social-link linkedin">
+                    <i class="fab fa-linkedin-in"></i>
+                    </a>
                     </div>
                 </div>
+
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; YouTube ThumbnailPro by Abhishek Sahani. All rights reserved. Made with ❤️ for YouTube creators.</p>
+                <p>&copy; YouTube ThumbnailPro by Abhishek Sahani. All rights reserved. Made for YouTube creators.</p>
             </div>
         </div>
     </footer>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script>
-        // Enhanced JavaScript for interactions
         document.addEventListener('DOMContentLoaded', function() {
-            // FIXED: Mobile menu functionality
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const mobileMenu = document.getElementById('mobile-menu');
             const menuOverlay = document.getElementById('menu-overlay');
@@ -545,32 +550,25 @@
                 }
             }
 
-            // Mobile menu toggle click
             mobileMenuToggle.addEventListener('click', toggleMobileMenu);
-
-            // Close menu when overlay is clicked
             menuOverlay.addEventListener('click', closeMobileMenu);
 
-            // Close menu when a mobile nav link is clicked
             document.querySelectorAll('.mobile-nav-link').forEach(link => {
                 link.addEventListener('click', closeMobileMenu);
             });
 
-            // Close menu when escape key is pressed
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && isMenuOpen) {
                     closeMobileMenu();
                 }
             });
 
-            // FIXED: Close mobile menu on window resize to desktop size
             window.addEventListener('resize', function() {
                 if (window.innerWidth > 768 && isMenuOpen) {
                     closeMobileMenu();
                 }
             });
 
-            // Navbar scroll effect
             const navbar = document.getElementById('navbar');
             window.addEventListener('scroll', function() {
                 if (window.scrollY > 100) {
@@ -580,7 +578,6 @@
                 }
             });
 
-            // Scroll animations
             const observerOptions = {
                 threshold: 0.1,
                 rootMargin: '0px 0px -50px 0px'
@@ -598,7 +595,6 @@
                 observer.observe(el);
             });
 
-            // Add loading animation to buttons
             document.querySelectorAll('.cta-button').forEach(button => {
                 button.addEventListener('click', function(e) {
                     if (this.href && this.href.includes('/generator')) {

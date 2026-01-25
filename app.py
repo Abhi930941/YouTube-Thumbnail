@@ -10,7 +10,6 @@ app = Flask(__name__, template_folder='templates')
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
 
-# Logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -50,7 +49,6 @@ def home():
 
 @app.route('/generator')
 def generator():
-    # Check if template or mode parameter is provided
     template_param = request.args.get('template', '')
     mode_param = request.args.get('mode', '')
     return render_template('generator.html', template_param=template_param, mode_param=mode_param)
@@ -89,7 +87,6 @@ def generate_thumbnail():
             'bg_type': request.form.get('bg_type', 'color')
         }
 
-        # Background
         bg_image = request.files.get('bg_image')
         if form_data['bg_type'] == 'image' and bg_image and allowed_file(bg_image.filename):
             try:
@@ -108,9 +105,7 @@ def generate_thumbnail():
         title_font = load_font(form_data['title_size'], is_bold, is_italic)
         subtitle_font = load_font(form_data['subtitle_size'], is_bold, is_italic)
 
-        # Helper: draw centered text with optional underline + shadow
         def draw_centered(text, font, y_center):
-            # Wrap to 1–2 lines max; otherwise reduce size automatically
             max_width = int(1280 * 0.9)
             size = font.size if hasattr(font, "size") else form_data['title_size']
             tmp_font = font
@@ -118,13 +113,11 @@ def generate_thumbnail():
             def measure(t, f):
                 return draw.textlength(t, font=f)
 
-            # Try single line first; if too wide, shrink until fits
             if measure(text, tmp_font) > max_width:
                 while size > 18 and measure(text, tmp_font) > max_width:
                     size -= 2
                     tmp_font = load_font(size, is_bold, is_italic)
 
-            # Final draw (single line), centered
             line_w = measure(text, tmp_font)
             x = (1280 - line_w) // 2
             y = int(y_center - (size * 0.6))
@@ -248,13 +241,11 @@ def apply_filter():
         logger.error(f"Filter error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
-# FIXED: Add error handler for 500 errors
 @app.errorhandler(500)
 def internal_error(error):
     logger.error(f"Internal server error: {error}")
     return "Internal Server Error - Please check the server logs", 500
 
-# FIXED: Add error handler for 404 errors
 @app.errorhandler(404)
 def not_found_error(error):
     logger.error(f"Page not found: {error}")

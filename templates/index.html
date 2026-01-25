@@ -2,7 +2,6 @@
 
 {% block content %}
 <style>
-    /* Hero Section with Animation */
     .hero {
         min-height: 100vh;
         display: flex;
@@ -179,7 +178,6 @@
         transform: translateY(-3px);
     }
 
-    /* Stats Section */
     .stats {
         background: white;
         padding: 4rem 0;
@@ -226,7 +224,6 @@
         font-weight: 500;
     }
 
-    /* Enhanced Templates Section */
     .templates {
         padding: 6rem 0;
         background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
@@ -364,7 +361,6 @@
         box-shadow: var(--shadow-lg);
     }
 
-    /* Features Showcase */
     .features-showcase {
         padding: 6rem 0;
         background: var(--gray-900);
@@ -417,7 +413,6 @@
         line-height: 1.6;
     }
 
-    /* Enhanced FAQ Section */
     .faqs {
         padding: 6rem 2rem;
         background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -510,7 +505,6 @@
         transform: rotate(45deg);
     }
 
-    /* Final CTA Section */
     .final-cta {
         padding: 6rem 0;
         background: var(--gradient-primary);
@@ -554,7 +548,6 @@
         opacity: 0.8;
     }
 
-    /* Mobile Responsive */
     @media (max-width: 768px) {
         .cta-buttons {
             flex-direction: column;
@@ -580,7 +573,6 @@
     }
 </style>
 
-<!-- Enhanced Hero Section -->
 <section class="hero">
     <div class="hero-background"></div>
     <div class="floating-shapes">
@@ -603,7 +595,6 @@
     </div>
 </section>
 
-<!-- Stats Section -->
 <section class="stats fade-in">
     <div class="stats-grid">
         <div class="stat-card">
@@ -625,7 +616,6 @@
     </div>
 </section>
 
-<!-- Enhanced Templates Section -->
 <section class="templates fade-in">
     <div class="container">
         <div class="section-header">
@@ -685,7 +675,6 @@
     </div>
 </section>
 
-<!-- Features Showcase -->
 <section class="features-showcase fade-in">
     <div class="container">
         <div class="section-header">
@@ -745,7 +734,6 @@
     </div>
 </section>
 
-<!-- Enhanced FAQ Section -->
 <section class="faqs fade-in">
     <div class="container">
         <h2>Frequently Asked Questions</h2>
@@ -804,7 +792,6 @@
     </div>
 </section>
 
-<!-- Final CTA Section -->
 <section class="final-cta fade-in">
     <div class="container">
         <div class="cta-content">
@@ -837,25 +824,20 @@
 </section>
 
 <script>
-// Enhanced JavaScript for interactions
 document.addEventListener('DOMContentLoaded', function() {
-    // FAQ functionality
     const faqItems = document.querySelectorAll('.faq-item');
     faqItems.forEach(item => {
         const btn = item.querySelector('.faq-question');
         btn.addEventListener('click', () => {
-            // Close other items
             faqItems.forEach(otherItem => {
                 if (otherItem !== item) {
                     otherItem.classList.remove('active');
                 }
             });
-            // Toggle current item
             item.classList.toggle('active');
         });
     });
 
-    // Scroll animations observer
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'

@@ -11,8 +11,7 @@
                 <span class="mode-text">Switch to Advanced Mode</span>
             </button>
         </div>
-        
-        <!-- Simple Mode (Original Features) -->
+
         <div id="simple-mode" class="generator-container">
             <div class="editor-panel">
                 <form id="thumbnail-form" enctype="multipart/form-data">
@@ -175,8 +174,7 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Advanced Mode (New Features) -->
+
         <div id="advanced-mode" class="advanced-editor" style="display:none;">
             <div class="editor-toolbar">
                 <button id="add-text"><i class="fas fa-font"></i> Add Text</button>
@@ -209,30 +207,26 @@
     </div>
 </section>
 
-<!-- Templates Modal -->
 <div id="templates-modal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Choose a Template</h2>
         <div class="template-gallery">
-            <!-- Templates will be loaded here -->
         </div>
     </div>
 </div>
 
-<!-- Add this modal to your generator.html -->
 <div id="shape-modal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Select a Shape</h2>
         <div class="shape-selector">
-            <!-- Shapes will be loaded here by JavaScript -->
         </div>
     </div>
 </div>
 
 <style>
-/* Enhanced Generator Styling */
+
 :root {
     --primary: #FF0000;
     --primary-dark: #CC0000;
@@ -256,7 +250,15 @@
     --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-/* Enhanced Generator Section */
+@media (max-width: 768px) {
+    :root {
+        --primary: #FF6B6B;
+        --primary-dark: #E85555;
+        --primary-light: #FF8787;
+        --gradient-primary: linear-gradient(135deg, #FF6B6B 0%, #E85555 100%);
+    }
+}
+
 .generator {
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     min-height: 100vh;
@@ -346,7 +348,6 @@
     background: linear-gradient(135deg, #FF2020 0%, #DD0000 100%);
 }
 
-/* Enhanced Generator Container */
 .generator-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -371,7 +372,6 @@
     border-color: var(--primary);
 }
 
-/* Enhanced Form Sections */
 .form-section {
     background: var(--gray-50);
     border-radius: 1rem;
@@ -405,7 +405,6 @@
     color: var(--primary);
 }
 
-/* Modal Styling */
 .modal {
     display: none;
     position: fixed;
@@ -487,11 +486,10 @@
     gap: 1rem;
 }
 
-/* Fixed Preview Container */
 .preview-fixed-container {
     position: relative;
     width: 100%;
-    height: 280px;/*Fixed height for 16:9 aspect ratio (720px scaled down) */
+    height: 280px;
     overflow: hidden;
     margin-bottom: 20px;
     border-radius: 10px;
@@ -516,7 +514,6 @@
     transform-origin: center center;
 }
 
-/* Ensure the preview panel itself doesn't scroll */
 .preview-panel {
     display: flex;
     flex-direction: column;
@@ -529,7 +526,6 @@
     overflow: visible;
 }
 
-/* Responsive Design */
 @media (max-width: 1200px) {
     .generator-container {
         grid-template-columns: 1fr;
@@ -635,7 +631,6 @@
     }
 }
 
-/* Loading States */
 .loading {
     opacity: 0.7;
     pointer-events: none;
@@ -660,7 +655,6 @@
     100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* Success States */
 .success {
     border-color: #10B981 !important;
     background-color: #D1FAE5 !important;
@@ -671,7 +665,6 @@
     background-color: #FEE2E2 !important;
 }
 
-/* Hover Effects */
 .form-group:hover label {
     color: var(--primary);
 }
@@ -680,12 +673,10 @@
     color: var(--primary);
 }
 
-/* Focus States */
 .form-group input:focus + .character-count {
     color: var(--primary);
 }
 
-/* Animation Delays for Staggered Effect */
 .form-section:nth-child(1) { animation: fadeInLeft 0.8s ease-out 0.1s both; }
 .form-section:nth-child(2) { animation: fadeInLeft 0.8s ease-out 0.2s both; }
 .form-section:nth-child(3) { animation: fadeInLeft 0.8s ease-out 0.3s both; }
@@ -703,7 +694,6 @@
     }
 }
 
-/* Preview Panel Animation */
 .preview-panel {
     animation: fadeInRight 0.8s ease-out 0.6s both;
 }
@@ -720,13 +710,11 @@
 }
 </style>
 
-<!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 <script>
-// Enhanced JavaScript functionality
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Character count functionality
     const titleInput = document.getElementById('title');
     const subtitleInput = document.getElementById('subtitle');
     const titleCount = document.getElementById('title-count');
@@ -735,8 +723,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateCharCount(input, counter) {
         const count = input.value.length;
         counter.textContent = count;
-        
-        // Add visual feedback
         const maxLength = input.getAttribute('maxlength');
         const percentage = (count / maxLength) * 100;
         
@@ -752,11 +738,9 @@ document.addEventListener('DOMContentLoaded', function() {
     titleInput?.addEventListener('input', () => updateCharCount(titleInput, titleCount));
     subtitleInput?.addEventListener('input', () => updateCharCount(subtitleInput, subtitleCount));
 
-    // Initialize character counts
     if (titleInput && titleCount) updateCharCount(titleInput, titleCount);
     if (subtitleInput && subtitleCount) updateCharCount(subtitleInput, subtitleCount);
 
-    // Range slider value display
     const titleSizeSlider = document.getElementById('title-size');
     const titleSizeValue = document.getElementById('title-size-value');
     const subtitleSizeSlider = document.getElementById('subtitle-size');
@@ -770,7 +754,6 @@ document.addEventListener('DOMContentLoaded', function() {
         subtitleSizeValue.textContent = subtitleSizeSlider.value;
     });
 
-    // Color picker value display
     const textColorPicker = document.getElementById('text-color');
     const textColorValue = document.getElementById('text-color-value');
     const bgColorPicker = document.getElementById('bg-color');
@@ -784,14 +767,11 @@ document.addEventListener('DOMContentLoaded', function() {
         bgColorValue.textContent = bgColorPicker.value.toUpperCase();
     });
 
-    // Style button functionality
     const styleButtons = document.querySelectorAll('.style-btn');
     styleButtons.forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             this.classList.toggle('active');
-            
-            // Add click animation
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 this.style.transform = '';
@@ -799,18 +779,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Template button functionality
     const templateButtons = document.querySelectorAll('.template-btn');
     templateButtons.forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            // Remove active class from all templates
             templateButtons.forEach(t => t.classList.remove('active'));
-            // Add active class to clicked template
             this.classList.add('active');
-            
-            // Apply template colors
             const bgColor = this.dataset.bg;
             const textColor = this.dataset.text;
             
@@ -818,8 +792,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (textColorPicker) textColorPicker.value = textColor;
             if (bgColorValue) bgColorValue.textContent = bgColor;
             if (textColorValue) textColorValue.textContent = textColor;
-            
-            // Add success animation
+
             this.style.transform = 'scale(1.05)';
             this.style.borderColor = 'var(--primary)';
             setTimeout(() => {
@@ -829,7 +802,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // File upload functionality
     const fileInput = document.getElementById('bg-image');
     const fileName = document.getElementById('file-name');
     
@@ -843,7 +815,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Radio button functionality
     const radioInputs = document.querySelectorAll('input[name="bg_type"]');
     const bgColorGroup = document.getElementById('bg-color-group');
     const bgImageGroup = document.getElementById('bg-image-group');
@@ -860,7 +831,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Mode toggle functionality
     const modeToggle = document.getElementById('toggle-editor-mode');
     const simpleMode = document.getElementById('simple-mode');
     const advancedMode = document.getElementById('advanced-mode');
@@ -878,24 +848,21 @@ document.addEventListener('DOMContentLoaded', function() {
             advancedMode.style.display = 'none';
             this.innerHTML = '<i class="fas fa-rocket"></i><span class="mode-text">Switch to Advanced Mode</span>';
         }
-        
-        // Add transition effect
+
         this.style.transform = 'scale(0.95)';
         setTimeout(() => {
             this.style.transform = '';
         }, 150);
     });
 
-    // Download button enhancement
     const downloadButtons = document.querySelectorAll('.download-button');
     downloadButtons.forEach(btn => {
         btn.addEventListener('click', function() {
-            // Add loading state
+
             const originalText = this.innerHTML;
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
             this.classList.add('loading');
             
-            // Simulate processing time
             setTimeout(() => {
                 this.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
                 this.style.background = '#10B981';
@@ -909,7 +876,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Modal functionality
     const modals = document.querySelectorAll('.modal');
     const closeButtons = document.querySelectorAll('.close');
 
@@ -927,51 +893,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Add smooth scrolling for better UX
     document.documentElement.style.scrollBehavior = 'smooth';
 
-    // Initialize tooltips for better user guidance
     const tooltipElements = document.querySelectorAll('[title]');
     tooltipElements.forEach(el => {
         el.addEventListener('mouseenter', function() {
             this.style.position = 'relative';
         });
     });
-    
-    // Text scaling for fixed preview container
+
     function scaleTextToFit() {
         const preview = document.getElementById('thumbnail-preview');
         const title = document.getElementById('preview-title');
         const subtitle = document.getElementById('preview-subtitle');
         
         if (!preview || !title || !subtitle) return;
-        
-        // Reset font sizes to original values
+
         const titleSize = document.getElementById('title-size').value;
         const subtitleSize = document.getElementById('subtitle-size').value;
         
         title.style.fontSize = `${titleSize}px`;
         subtitle.style.fontSize = `${subtitleSize}px`;
-        
-        // Get container dimensions
-        const containerWidth = preview.offsetWidth - 40; // Account for padding
+
+        const containerWidth = preview.offsetWidth - 40; 
         const containerHeight = preview.offsetHeight - 40;
-        
-        // Scale title if needed
+
         let currentTitleSize = parseInt(titleSize);
         while (title.offsetWidth > containerWidth && currentTitleSize > 20) {
             currentTitleSize -= 2;
             title.style.fontSize = `${currentTitleSize}px`;
         }
-        
-        // Scale subtitle if needed
+
         let currentSubtitleSize = parseInt(subtitleSize);
         while (subtitle.offsetWidth > containerWidth && currentSubtitleSize > 12) {
             currentSubtitleSize -= 1;
             subtitle.style.fontSize = `${currentSubtitleSize}px`;
         }
-        
-        // Adjust vertical positioning if text is too tall
+
         const totalTextHeight = title.offsetHeight + subtitle.offsetHeight + 20;
         if (totalTextHeight > containerHeight) {
             const scaleFactor = containerHeight / totalTextHeight;
@@ -979,14 +937,11 @@ document.addEventListener('DOMContentLoaded', function() {
             subtitle.style.fontSize = `${Math.max(12, parseInt(subtitle.style.fontSize) * scaleFactor)}px`;
         }
     }
-    
-    // Call the scaling function on window resize and after DOM updates
+
     window.addEventListener('resize', scaleTextToFit);
-    
-    // Apply scaling after a short delay to ensure DOM is fully loaded
+
     setTimeout(scaleTextToFit, 500);
-    
-    // Also apply scaling when any style changes that might affect text size
+
     const styleInputs = document.querySelectorAll('input[type="range"], input[type="color"], input[type="text"], input[type="checkbox"]');
     styleInputs.forEach(input => {
         input.addEventListener('input', () => {
