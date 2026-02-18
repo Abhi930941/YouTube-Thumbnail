@@ -113,14 +113,14 @@ youtube-thumbnail-generator/
 **Screenshots:**
 <table>
   <tr>
-    <td><img src="screenshots/home.png" alt="Home Page" /></td>
-    <td><img src="screenshots/simple-mode.png" alt="Simple Mode Editor" /></td>
-    <td><img src="screenshots/advanced-mode.png" alt="Advanced Canvas Editor" /></td>
+    <td><img src="Screenshot 2026-02-16 003327.png" alt="Home Page" /></td>
+    <td><img src="Screenshot 2026-02-16 003443.png" alt="Simple Mode Editor" /></td>
+    <td><img src="Screenshot 2026-02-16 003928.png" alt="Advanced Canvas Editor" /></td>
   </tr>
   <tr>
-    <td align="center"><b>Home Page</b><br/>Landing page with features</td>
-    <td align="center"><b>Simple Mode</b><br/>Quick form-based editor</td>
-    <td align="center"><b>Advanced Mode</b><br/>Canvas-based editor</td>
+    <td align="center"><b>Home Page</b></td>
+    <td align="center"><b>Simple Mode</b></td>
+    <td align="center"><b>Advanced Mode</b></td>
   </tr>
 </table>
 
