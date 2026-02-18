@@ -106,9 +106,9 @@ youtube-thumbnail-generator/
 
 ## Demo & Links
 
-**Live Demo:** [Add deployment link when available]
+**Live Demo:** https://youtube-thumbnail.onrender.com/
 
-**GitHub Repository:** [Add your repo link]
+**GitHub Repository:** https://github.com/Abhi930941/YouTube-Thumbnail
 
 **Screenshots:**
 <table>
@@ -168,6 +168,8 @@ This project matters because it helps YouTube creators design professional thumb
 
 **LinkedIn:** [linkedin.com/in/abhishek-sahani-447851341](https://www.linkedin.com/in/abhishek-sahani-447851341)
 
-**Email:** Available via LinkedIn
+**Portfolio:** [abhi930941.github.io/Portfolio](https://abhi930941.github.io/Portfolio/)
+
+**Email:** abhishek242443@gmail.com
 
 ---
