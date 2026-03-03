@@ -65,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
             title_color: '#000000',
             subtitle_color: '#333333'
         },
-        // FIXED: Added missing golden-energy template
         'golden-energy': {
             name: 'Golden Energy',
             background: 'linear-gradient(135deg, #FFD700, #FF8C00)',
@@ -170,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ------------------------------
-    // SIMPLE MODE (existing features)
+    // SIMPLE MODE 
     // ------------------------------
     const el = {
         titleInput: document.getElementById('title'),
@@ -197,6 +196,9 @@ document.addEventListener('DOMContentLoaded', function() {
         shadowOffsetX: document.getElementById('shadow-offset-x'),
         shadowOffsetY: document.getElementById('shadow-offset-y')
     };
+
+    // Stores bg_image_data restored from history 
+    let restoredBgImageData = null;
 
     function applySimpleStyles() {
         const styles = el.textStylesInput.value.split(',').filter(Boolean);
@@ -251,6 +253,24 @@ document.addEventListener('DOMContentLoaded', function() {
         el.subtitleCount.textContent = el.subtitleInput.value.length;
     }
 
+    // ── Helper: Blob → base64 data URL ────────────────
+    function blobToBase64(blob) {
+        return new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload  = () => resolve(r.result);
+            r.onerror = reject;
+            r.readAsDataURL(blob);
+        });
+    }
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const r = new FileReader();
+            r.onload  = () => resolve(r.result);
+            r.onerror = reject;
+            r.readAsDataURL(file);
+        });
+    }
+
     async function downloadSimple() {
         try {
             const btn = el.downloadBtn;
@@ -258,17 +278,78 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
             const form = document.getElementById('thumbnail-form');
-            const fd = new FormData(form);
+            const fd   = new FormData(form);
 
-            const res = await fetch('/generate-thumbnail', { method:'POST', body: fd });
+            // ── If bg_type=image but no file selected (restored from history),
+            const bgType = document.querySelector('input[name="bg_type"]:checked')?.value || 'color';
+            if (bgType === 'image' && !(el.bgImageInput?.files?.[0]) && restoredBgImageData) {
+                try {
+                    // Convert base64 data URL to Blob and append to FormData
+                    const res = await fetch(restoredBgImageData);
+                    const imgBlob = await res.blob();
+                    fd.set('bg_image', imgBlob, 'restored_bg.png');
+                } catch (imgErr) {
+                    console.warn('Could not inject restored bg image:', imgErr);
+                }
+            }
+
+            const res = await fetch('/generate-thumbnail', { method: 'POST', body: fd });
             if (!res.ok) throw new Error(`Server responded ${res.status}`);
 
             const blob = await res.blob();
+
+            // ── Download file ─────────────────────────────────
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
+            const a   = document.createElement('a');
             a.href = url; a.download = 'youtube-thumbnail.png';
             document.body.appendChild(a); a.click();
-            setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 120);
+            setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 120);
+
+            // ── Save full entry to history ───────────────
+            const userId = window.__clerkUserId;
+            if (userId) {
+                try {
+                    const thumbnailB64 = await blobToBase64(blob);
+
+                    // Capture background image if uploaded
+                    const bgType = document.querySelector('input[name="bg_type"]:checked')?.value || 'color';
+                    let bgImageData = null;
+                    if (bgType === 'image') {
+                        if (el.bgImageInput?.files?.[0]) {
+                            bgImageData = await fileToBase64(el.bgImageInput.files[0]);
+                        } else if (restoredBgImageData) {
+                            // Use the restored image data 
+                            bgImageData = restoredBgImageData;
+                        }
+                    }
+
+                    await fetch('/api/history/add', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id:       userId,
+                            title:         el.titleInput?.value        || 'Untitled',
+                            subtitle:      el.subtitleInput?.value     || '',
+                            mode:          'simple',
+                            bg_color:      el.bgColorInput?.value      || '#FF0000',
+                            text_color:    el.textColorInput?.value    || '#FFFFFF',
+                            title_size:    parseInt(el.titleSizeInput?.value)    || 48,
+                            subtitle_size: parseInt(el.subtitleSizeInput?.value) || 24,
+                            text_styles:   el.textStylesInput?.value   || '',
+                            shadow_enabled:  el.shadowToggle?.checked  || false,
+                            shadow_color:    el.shadowColorInput?.value  || '#000000',
+                            shadow_offset_x: parseInt(el.shadowOffsetX?.value) || 2,
+                            shadow_offset_y: parseInt(el.shadowOffsetY?.value) || 2,
+                            bg_type:       bgType,
+                            bg_image_data: bgImageData,
+                            thumbnail_b64: thumbnailB64,
+                        })
+                    });
+                } catch (histErr) {
+                    console.warn('History save failed (non-critical):', histErr);
+                }
+            }
+
         } catch (e) {
             console.error('Download error:', e);
             alert('Failed to download thumbnail. Please try again.');
@@ -291,12 +372,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (el.shadowOffsetX) el.shadowOffsetX.addEventListener('input', applySimpleStyles);
         if (el.shadowOffsetY) el.shadowOffsetY.addEventListener('input', applySimpleStyles);
 
-        // FIXED: Enhanced background image upload functionality
+        //background image upload functionality
         el.bgImageInput.addEventListener('change', function(ev){
             const file = ev.target.files[0];
             if (file) {
                 el.fileNameDisplay.textContent = file.name;
                 el.fileNameDisplay.style.color = 'var(--primary)';
+                
+                // User selected a new file -clear the restored bg image data
+                restoredBgImageData = null;
                 
                 const reader = new FileReader();
                 reader.onload = e => {
@@ -406,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let drag = { active:false, startX:0, startY:0, left:0, top:0 };
     let resizing = false;
 
-    // FIXED: Store current background state for exact matching
+    // Store current background state for exact matching
     let currentBackground = {
         type: 'color',
         value: '#FF0000',
@@ -463,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
         makeDraggable(adv.advTitle);
         makeDraggable(adv.advSubtitle);
 
-        // FIXED: Use enhanced editable events for mobile compatibility
+        // Use enhanced editable events for mobile compatibility
         setupEditableEvents(adv.advTitle);
         setupEditableEvents(adv.advSubtitle);
 
@@ -481,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.addEventListener('resize', handleCanvasResize);
     }
 
-    // FIXED: Responsive canvas setup function
+    // Responsive canvas setup function
     function setupResponsiveCanvas() {
         const canvasContainer = adv.canvasRoot;
         const isMobile = window.innerWidth <= 768;
@@ -504,7 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
         canvasContainer.style.border = '1px solid #ccc';
     }
 
-    // FIXED: Responsive elements positioning
+    // Responsive elements positioning
     function setupResponsiveElements() {
         const isMobile = window.innerWidth <= 768;
         const scaleFactor = isMobile ? getScaleFactor() : 1;
@@ -532,7 +616,7 @@ document.addEventListener('DOMContentLoaded', function() {
         adv.advSubtitle.style.zIndex = '10';
     }
 
-    // FIXED: Get scale factor for mobile responsiveness
+    // Get scale factor for mobile responsiveness
     function getScaleFactor() {
         if (window.innerWidth <= 480) {
             return 0.3; // Extra small screens
@@ -542,7 +626,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return 1; // Desktop
     }
 
-    // FIXED: Handle canvas resize
+    // Handle canvas resize
     function handleCanvasResize() {
         if (!advancedInitialized) return;
         
@@ -559,7 +643,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // FIXED: Scale individual elements for mobile
+    // Scale individual elements for mobile
     function scaleElementForMobile(element) {
         const scaleFactor = getScaleFactor();
         
@@ -599,7 +683,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // FIXED: Enhanced background management system for exact preview-to-download matching
+    // Background management system for exact preview-to-download matching
     function setAdvancedBackground(type, value, imageData = null) {
         currentBackground = { type, value, imageData };
         
@@ -614,7 +698,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (type === 'color') {
             adv.preview.style.backgroundColor = value;
         } else if (type === 'gradient') {
-            // FIXED: Apply gradient backgrounds properly in preview
+            // Applying gradient backgrounds properly in preview
             adv.preview.style.background = value;
         } else if (type === 'image' && imageData) {
             adv.preview.style.backgroundImage = `url(${imageData})`;
@@ -635,7 +719,7 @@ document.addEventListener('DOMContentLoaded', function() {
         this.addEventListener('blur', ()=>{ this.contentEditable = 'false'; updateProperties(this); });
     }
 
-    // FIXED: Enhanced double-click/tap detection for mobile
+    // Enhanced double-click/tap detection for mobile
     function setupEditableEvents(element) {
         let tapCount = 0;
         let tapTimeout;
@@ -663,7 +747,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function makeDraggable(elm){
         elm.style.cursor = 'move';
         
-        // FIXED: Add both mouse and touch event listeners for mobile compatibility
+        // Adding both mouse and touch event listeners for mobile compatibility
         elm.addEventListener('mousedown', startDrag);
         elm.addEventListener('touchstart', startTouchDrag, { passive: false });
         
@@ -689,7 +773,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('mouseup', stopDrag);
     }
 
-    // FIXED: Touch drag start function for mobile devices
+    // Touch drag start function for mobile devices
     function startTouchDrag(e){
         e.preventDefault(); e.stopPropagation();
         selectElement(this);
@@ -713,7 +797,7 @@ document.addEventListener('DOMContentLoaded', function() {
         selected.style.top  = `${drag.top + dy}px`;
     }
 
-    // FIXED: Touch drag move function for mobile devices
+    // Touch drag move function for mobile devices
     function touchDragMove(e){
         if (!drag.active || !selected) return;
         e.preventDefault();
@@ -731,14 +815,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.removeEventListener('mouseup', stopDrag);
     }
 
-    // FIXED: Stop touch drag function for mobile devices
+    // Stop touch drag function for mobile devices
     function stopTouchDrag(){
         drag.active = false;
         document.removeEventListener('touchmove', touchDragMove);
         document.removeEventListener('touchend', stopTouchDrag);
     }
 
-    // ------- Add Text (single line & shadow-ready with mobile responsiveness) -------
+    // ------- Adding Text (single line & shadow-ready with mobile responsiveness) -------
     function addTextElement(){
         const t = document.createElement('div');
         t.className = 'draggable-element draggable-text';
@@ -770,7 +854,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fitSingleLine(t);
     }
 
-    // -------- Shapes (SIMPLIFIED - removed problematic shapes) ----------
+    // -------- Shapes ----------
     const SHAPES = [
         {key:'rectangle', label:'Rectangle'},
         {key:'circle', label:'Circle'},
@@ -833,7 +917,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addResizeHandle(s);
         selectElement(s);
         
-        // FIXED: Enhanced double-click/tap for mobile editing
+        //Double-click/tap for mobile editing
         s.addEventListener('dblclick', () => {
             const v = prompt('Enter text for shape:', s.textContent);
             if (v !== null) { 
@@ -986,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', function() {
         h.className = 'element-resize-handle';
         node.appendChild(h);
         
-        // FIXED: Add both mouse and touch events for resize handles
+        // Adding both mouse and touch events for resize handles
         h.addEventListener('mousedown', startResize);
         h.addEventListener('touchstart', startTouchResize, { passive: false });
         
@@ -1021,7 +1105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener('mouseup', up);
         }
 
-        // FIXED: Touch resize functionality for mobile devices
+        // Touch resize functionality for mobile devices
         function startTouchResize(e) {
             e.stopPropagation();
             e.preventDefault();
@@ -1245,7 +1329,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Keep canvas blank-click to deselect - FIXED: Add touch support
+    // Keep canvas blank-click to deselect - Adding touch support
     adv.canvasRoot?.addEventListener('click', function(e){
         if (e.target === this || e.target === adv.preview){
             document.querySelectorAll('.draggable-element').forEach(n=>n.classList.remove('selected'));
@@ -1254,7 +1338,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // FIXED: Add touch support for canvas deselection
+    // Adding touch support for canvas deselection
     adv.canvasRoot?.addEventListener('touchend', function(e){
         if (e.target === this || e.target === adv.preview){
             // Only deselect if it's a simple tap, not a drag
@@ -1266,13 +1350,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // -------- FIXED Templates Modal (Advanced) with Proper Preview --------
+    // Templates Modal (Advanced) with Proper Preview
     function openTemplates(){
         const modal = adv.templatesModal;
         if (!modal) return;
         modal.style.display='block';
 
-        // FIXED: Enhanced templates with proper gradient support
+        // Templates with proper gradient support
         const templates = [
             {name:'Red Gradient', background:'linear-gradient(135deg, #FF0000, #990000)', type:'gradient'},
             {name:'Dark Professional', background:'linear-gradient(135deg, #000000, #333333)', type:'gradient'},
@@ -1303,7 +1387,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const div = document.createElement('div');
                 div.className = 'template-thumbnail';
                 
-                // FIXED: Determine appropriate text color for better visibility
+                // Determine appropriate text color for better visibility
                 const textColor = getContrastColor(t.background, t.type);
                 
                 div.innerHTML = `
@@ -1326,7 +1410,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // FIXED: Helper function to determine appropriate text color for templates
+    // Helper function to determine appropriate text color for templates
     function getContrastColor(background, type) {
         if (type === 'color') {
             // For solid colors, determine if light or dark
@@ -1342,7 +1426,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // FIXED: Apply template with proper preview update
+    // Apply template with proper preview update
     function applyTemplateAdvanced(t){
         console.log('Applying template:', t);
         
@@ -1353,7 +1437,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // FIXED: Apply background using enhanced system
+        // Apply background using enhanced system
         setAdvancedBackground(t.type || 'color', t.background);
         
         // Update title and subtitle with appropriate colors
@@ -1404,44 +1488,277 @@ document.addEventListener('DOMContentLoaded', function() {
         node.style.whiteSpace = 'nowrap';
     }
 
-    // -------- FIXED Advanced Download - EXACT PREVIEW MATCHING for Mobile --------
+    // ── Serialize advanced canvas elements for re-edit ───
+    function serializeCanvasState() {
+        const STYLE_KEYS = ['position','left','top','fontSize','color','fontWeight',
+                            'fontStyle','textDecoration','backgroundColor','width','height',
+                            'opacity','zIndex','transform','borderRadius','textShadow',
+                            'whiteSpace','overflow','cursor'];
+        const elements = [];
+        const nodes = Array.from(adv.canvasRoot.querySelectorAll('.draggable-element'));
+
+        for (const node of nodes) {
+            // Skip resize handles (they have class element-resize-handle, not draggable-element)
+            const style = {};
+            STYLE_KEYS.forEach(k => { if (node.style[k]) style[k] = node.style[k]; });
+
+            const entry = {
+                id:      node.id || null,
+                style,
+                dataset: Object.fromEntries(Object.entries(node.dataset))
+            };
+
+            if (node.classList.contains('draggable-text')) {
+                entry.type    = 'text';
+                entry.tag     = node.tagName; 
+                entry.content = node.textContent || '';
+            } else if (node.classList.contains('draggable-shape')) {
+                entry.type      = 'shape';
+                entry.shapeType = node.dataset.shape || 'rectangle';
+                entry.content   = node.textContent   || '';
+            } else if (node.classList.contains('draggable-icon')) {
+                const iconEl    = node.querySelector('i');
+                entry.type      = 'icon';
+                entry.iconClass = iconEl ? iconEl.className : 'fas fa-star';
+            } else if (node.tagName === 'IMG') {
+                entry.type = 'image';
+                entry.src  = node.src; // base64 data URL from upload
+            }
+
+            elements.push(entry);
+        }
+
+        return {
+            background: {
+                type:      currentBackground.type,
+                value:     currentBackground.value,
+                imageData: currentBackground.imageData || null
+            },
+            elements
+        };
+    }
+
+    // ── Restore advanced mode canvas from a saved history entry ──
+    function restoreAdvancedFromEntry(entry) {
+        // First, make sure we're in advanced mode
+        if (simpleMode.style.display !== 'none') {
+            simpleMode.style.display = 'none';
+            advancedMode.style.display = 'block';
+            if (toggleModeBtn) {
+                toggleModeBtn.textContent = 'Switch to Simple Mode';
+            }
+            initAdvancedOnce();
+        }
+
+        const state = entry.canvas_state;
+        if (!state) {
+            // Old entry with no canvas state — just set background colour
+            setAdvancedBackground('color', entry.bg_color || '#FF0000');
+            if (entry.title)    adv.advTitle.textContent    = entry.title;
+            if (entry.subtitle) adv.advSubtitle.textContent = entry.subtitle;
+            return;
+        }
+
+        // 1. Background
+        if (state.background) {
+            const bg = state.background;
+            setAdvancedBackground(bg.type, bg.value, bg.imageData);
+        }
+
+        // 2. Remove any previously added custom elements (keep title / subtitle)
+        adv.canvasRoot.querySelectorAll('.draggable-element:not(#advanced-title):not(#advanced-subtitle)')
+            .forEach(n => n.remove());
+
+        // 3. Restore each serialised element
+        for (const e of state.elements) {
+            if (e.id === 'advanced-title') {
+                if (e.content !== undefined) adv.advTitle.textContent = e.content;
+                if (e.style)   Object.assign(adv.advTitle.style,   e.style);
+                if (e.dataset) Object.assign(adv.advTitle.dataset, e.dataset);
+                fitSingleLine(adv.advTitle);
+            } else if (e.id === 'advanced-subtitle') {
+                if (e.content !== undefined) adv.advSubtitle.textContent = e.content;
+                if (e.style)   Object.assign(adv.advSubtitle.style,   e.style);
+                if (e.dataset) Object.assign(adv.advSubtitle.dataset, e.dataset);
+                fitSingleLine(adv.advSubtitle);
+            } else if (e.type === 'text') {
+                const node = document.createElement(e.tag || 'div');
+                node.className   = 'draggable-element draggable-text';
+                node.textContent = e.content || '';
+                if (e.style)   Object.assign(node.style,   e.style);
+                if (e.dataset) Object.assign(node.dataset, e.dataset);
+                adv.canvasRoot.appendChild(node);
+                makeDraggable(node);
+                addResizeHandle(node);
+                setupEditableEvents(node);
+                fitSingleLine(node);
+            } else if (e.type === 'shape') {
+                const node = document.createElement('div');
+                node.className       = 'draggable-element draggable-shape';
+                node.dataset.shape   = e.shapeType || e.dataset?.shape || 'rectangle';
+                if (e.style)   Object.assign(node.style,   e.style);
+                if (e.dataset) Object.assign(node.dataset, e.dataset);
+                node.textContent = e.content || '';
+                applyShapeCSS(node, node.dataset.shape, node.style.backgroundColor || '#FF0000');
+                adv.canvasRoot.appendChild(node);
+                makeDraggable(node);
+                addResizeHandle(node);
+            } else if (e.type === 'icon') {
+                const node = document.createElement('div');
+                node.className = 'draggable-element draggable-icon';
+                node.innerHTML = `<i class="${e.iconClass || 'fas fa-star'}"></i>`;
+                if (e.style)   Object.assign(node.style,   e.style);
+                if (e.dataset) Object.assign(node.dataset, e.dataset);
+                adv.canvasRoot.appendChild(node);
+                makeDraggable(node);
+                addResizeHandle(node);
+            } else if (e.type === 'image') {
+                const img = document.createElement('img');
+                img.className = 'draggable-element draggable-image';
+                img.style.position = 'absolute';
+                if (e.style) Object.assign(img.style, e.style);
+                img.onload = function () {
+                    adv.canvasRoot.appendChild(img);
+                    makeDraggable(img);
+                    addResizeHandle(img);
+                };
+                img.src = e.src;
+            }
+        }
+    }
+
+    // ── Restore simple mode from a saved history entry ───────────────────────
+    function restoreSimpleFromEntry(entry) {
+        if (!el.titleInput) return;
+
+        if (entry.title    !== undefined) el.titleInput.value    = entry.title;
+        if (entry.subtitle !== undefined) el.subtitleInput.value = entry.subtitle;
+
+        if (entry.title_size) {
+            el.titleSizeInput.value           = entry.title_size;
+            el.titleSizeValue.textContent     = entry.title_size;
+        }
+        if (entry.subtitle_size) {
+            el.subtitleSizeInput.value        = entry.subtitle_size;
+            el.subtitleSizeValue.textContent  = entry.subtitle_size;
+        }
+        if (entry.bg_color)   el.bgColorInput.value   = entry.bg_color;
+        if (entry.text_color) el.textColorInput.value = entry.text_color;
+
+        // text-color display value
+        const tcv = document.getElementById('text-color-value');
+        const bcv = document.getElementById('bg-color-value');
+        if (tcv && entry.text_color) tcv.textContent = entry.text_color.toUpperCase();
+        if (bcv && entry.bg_color)   bcv.textContent = entry.bg_color.toUpperCase();
+
+        // Text styles
+        if (entry.text_styles !== undefined) {
+            el.textStylesInput.value = entry.text_styles;
+            const styles = (entry.text_styles || '').split(',');
+            document.querySelectorAll('.style-btn').forEach(btn => {
+                btn.classList.toggle('active', styles.includes(btn.dataset.style));
+            });
+        }
+
+        // Shadow
+        if (el.shadowToggle && entry.shadow_enabled !== undefined) {
+            el.shadowToggle.checked = !!entry.shadow_enabled;
+        }
+        if (el.shadowColorInput && entry.shadow_color)     el.shadowColorInput.value = entry.shadow_color;
+        if (el.shadowOffsetX    && entry.shadow_offset_x !== undefined) el.shadowOffsetX.value = entry.shadow_offset_x;
+        if (el.shadowOffsetY    && entry.shadow_offset_y !== undefined) el.shadowOffsetY.value = entry.shadow_offset_y;
+
+        // Background type
+        const bgType = entry.bg_type || 'color';
+        const radioEl = document.querySelector(`input[name="bg_type"][value="${bgType}"]`);
+        if (radioEl) {
+            radioEl.checked = true;
+            el.bgColorGroup.style.display = bgType === 'color' ? 'block' : 'none';
+            el.bgImageGroup.style.display = bgType === 'image' ? 'block' : 'none';
+        }
+
+        // Background image data restore
+        if (bgType === 'image' && entry.bg_image_data) {
+            restoredBgImageData = entry.bg_image_data; // store for downloadSimple to use
+            el.thumbnailPreview.style.backgroundImage    = `url(${entry.bg_image_data})`;
+            el.thumbnailPreview.style.backgroundSize     = 'cover';
+            el.thumbnailPreview.style.backgroundPosition = 'center';
+            el.thumbnailPreview.style.backgroundRepeat   = 'no-repeat';
+            if (el.fileNameDisplay) el.fileNameDisplay.textContent = '(Restored image — re-upload to change)';
+        } else {
+            // No bg image in this entry — clear any previously restored data
+            restoredBgImageData = null;
+        }
+
+        applySimpleStyles();
+        updateCounts();
+    }
+
+    // -------- Advanced Download - EXACT PREVIEW MATCHING for Mobile --------
     async function downloadAdvanced(){
         try {
             const btn = adv.advDownloadBtn;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
-            // FIXED: Get actual canvas dimensions from preview (mobile or desktop)
-            const canvasRect = adv.canvasRoot.getBoundingClientRect();
+            // Get actual canvas dimensions from preview (mobile or desktop)
+            const canvasRect  = adv.canvasRoot.getBoundingClientRect();
             const actualWidth = Math.round(canvasRect.width);
-            const actualHeight = Math.round(canvasRect.height);
+            const actualHeight= Math.round(canvasRect.height);
 
             // Create canvas with actual dimensions being displayed
             const cvs = document.createElement('canvas');
-            cvs.width = actualWidth; 
+            cvs.width  = actualWidth;
             cvs.height = actualHeight;
-            const ctx = cvs.getContext('2d');
+            const ctx  = cvs.getContext('2d');
 
-            // FIXED: Render background exactly as it appears in preview
+            // Render background exactly as it appears in preview
             await renderBackgroundToCanvas(ctx, actualWidth, actualHeight);
 
             // Get all elements and sort by z-index (same as preview)
             const nodes = Array.from(adv.canvasRoot.querySelectorAll('.draggable-element'));
-            nodes.sort((a,b)=> (parseInt(a.style.zIndex)||0) - (parseInt(b.style.zIndex)||0));
+            nodes.sort((a, b) => (parseInt(a.style.zIndex) || 0) - (parseInt(b.style.zIndex) || 0));
 
             // Render all elements exactly as they appear in preview
-            for (const n of nodes){
+            for (const n of nodes) {
                 await renderElementToCanvas(ctx, n, canvasRect);
             }
 
+            // Capture canvas state BEFORE async toBlob
+            const canvasState = serializeCanvasState();
+
             // Download the canvas
-            cvs.toBlob((blob)=>{
+            cvs.toBlob(async (blob) => {
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url; 
-                a.download = `youtube-thumbnail-${actualWidth}x${actualHeight}.png`;
+                const a   = document.createElement('a');
+                a.href     = url;
+                a.download = 'youtube-thumbnail.png';
                 document.body.appendChild(a); a.click();
-                setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 120);
+                setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 120);
+
+                // ── Save full entry to history ───────────────────────────────
+                const userId = window.__clerkUserId;
+                if (userId) {
+                    try {
+                        const thumbnailB64 = await blobToBase64(blob);
+                        await fetch('/api/history/add', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                user_id:      userId,
+                                title:        adv.advTitle?.textContent?.trim()    || 'Untitled',
+                                subtitle:     adv.advSubtitle?.textContent?.trim() || '',
+                                mode:         'advanced',
+                                bg_color:     currentBackground?.value || '#FF0000',
+                                text_color:   el.textColorInput?.value || '#FFFFFF',
+                                canvas_state: canvasState,
+                                thumbnail_b64: thumbnailB64,
+                            })
+                        });
+                    } catch (histErr) {
+                        console.warn('History save failed (non-critical):', histErr);
+                    }
+                }
             }, 'image/png');
 
         } catch (err) {
@@ -1453,7 +1770,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // FIXED: Enhanced background rendering function with dynamic dimensions
+    // Background rendering function with dynamic dimensions
     async function renderBackgroundToCanvas(ctx, canvasWidth, canvasHeight) {
         console.log('Rendering background:', currentBackground, `Size: ${canvasWidth}x${canvasHeight}`);
         
@@ -1463,15 +1780,15 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentBackground.type === 'gradient') {
             const gradientValue = currentBackground.value;
             if (gradientValue.includes('linear-gradient')) {
-                // Enhanced gradient parsing
+                // Gradient parsing
                 const colorMatches = gradientValue.match(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|rgb\([^)]+\)|rgba\([^)]+\)/g);
                 if (colorMatches && colorMatches.length >= 2) {
-                    // Create diagonal gradient (135deg approximation)
+                    // Create diagonal gradient 
                     const gradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
                     gradient.addColorStop(0, colorMatches[0]);
                     gradient.addColorStop(1, colorMatches[colorMatches.length - 1]);
                     
-                    // Add middle colors if present
+                    // Adding middle colors if present
                     if (colorMatches.length > 2) {
                         for (let i = 1; i < colorMatches.length - 1; i++) {
                             gradient.addColorStop(i / (colorMatches.length - 1), colorMatches[i]);
@@ -1488,7 +1805,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (currentBackground.type === 'image' && currentBackground.imageData) {
             const img = await loadImageSafe(currentBackground.imageData);
             if (img) {
-                // Render image to cover the entire canvas (same as CSS background-size: cover)
+                // Render image to cover the entire canvas 
                 const imgAspect = img.width / img.height;
                 const canvasAspect = canvasWidth / canvasHeight;
                 
@@ -1511,7 +1828,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // FIXED: Element rendering function with exact positioning from preview
+    // Element rendering function with exact positioning from preview
     async function renderElementToCanvas(ctx, node, canvasRect) {
         // Get exact position from computed styles relative to canvas
         const rect = node.getBoundingClientRect();
@@ -1695,4 +2012,34 @@ document.addEventListener('DOMContentLoaded', function() {
     function escapeHtml(str=''){
         return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
     }
+
+    // ── Restore generator state from history edit ────────────────────────────
+    // Called when user clicks "Edit" in history page.
+    // The history page stores the full entry in sessionStorage under 'tpro_edit'.
+    (function checkEditRestore() {
+        let raw;
+        try { raw = sessionStorage.getItem('tpro_edit'); } catch(e) { return; }
+        if (!raw) return;
+        try { sessionStorage.removeItem('tpro_edit'); } catch(e) {}
+
+        let entry;
+        try { entry = JSON.parse(raw); } catch(e) { console.warn('Edit restore parse error:', e); return; }
+
+        // Wait for DOM to be ready
+        setTimeout(() => {
+            if (entry.mode === 'advanced') {
+                // Switch to advanced mode first
+                initAdvancedOnce();
+                simpleMode.style.display  = 'none';
+                advancedMode.style.display = 'block';
+                if (toggleModeBtn) {
+                    toggleModeBtn.innerHTML = '<i class="fas fa-bolt"></i><span class="mode-text">Switch to Simple Mode</span>';
+                }
+                // Restore after a tick so DOM is ready
+                setTimeout(() => restoreAdvancedFromEntry(entry), 50);
+            } else {
+                restoreSimpleFromEntry(entry);
+            }
+        }, 100);
+    })();
 });

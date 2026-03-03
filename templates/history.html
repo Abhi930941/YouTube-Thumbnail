@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.history-hero {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d1515 50%, #1a1a1a 100%);
+    padding: 4rem 2rem 3rem; text-align: center; position: relative; overflow: hidden;
+}
+.history-hero::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(ellipse 60% 50% at 15% 50%, rgba(255,0,0,.08) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 50% at 85% 50%, rgba(255,0,0,.05) 0%, transparent 70%);
+    pointer-events:none;
+}
+.history-hero-content { position:relative; z-index:1; max-width:700px; margin:0 auto; animation:fadeUp .65s ease-out; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+.hero-badge {
+    display:inline-flex; align-items:center; gap:.5rem;
+    background:rgba(255,0,0,.12); border:1px solid rgba(255,0,0,.22);
+    color:#ff6b6b; padding:.4rem 1rem; border-radius:2rem; font-size:.83rem; font-weight:600; margin-bottom:1.2rem;
+}
+.history-hero h1 { font-family:'Poppins',sans-serif; font-size:clamp(1.75rem,4vw,2.75rem); font-weight:800; color:white; margin:0 0 .7rem; line-height:1.15; }
+.history-hero h1 span { background:linear-gradient(135deg,#FF0000,#CC0000); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.history-hero p { color:rgba(255,255,255,.55); font-size:1rem; margin:0 0 2rem; }
+.hero-stats { display:flex; justify-content:center; gap:2.5rem; flex-wrap:wrap; }
+.stat-item  { text-align:center; }
+.stat-num   { display:block; font-family:'Poppins',sans-serif; font-size:1.75rem; font-weight:800; background:linear-gradient(135deg,#FF0000,#CC0000); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; }
+.stat-lbl   { display:block; color:rgba(255,255,255,.45); font-size:.8rem; margin-top:.2rem; }
+
+.login-gate { text-align:center; padding:5rem 2rem; max-width:480px; margin:0 auto; animation:fadeUp .6s ease-out; }
+.login-gate-icon { width:88px; height:88px; background:linear-gradient(135deg,#fff0f0,#ffe4e4); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; font-size:2.2rem; }
+.login-gate h3 { font-size:1.4rem; font-weight:700; color:var(--gray-900); margin:0 0 .65rem; }
+.login-gate p  { color:var(--gray-500); margin:0 auto 1.75rem; max-width:340px; line-height:1.6; }
+.btn-signin { display:inline-flex; align-items:center; gap:.5rem; padding:.75rem 1.75rem; background:linear-gradient(135deg,#FF0000,#CC0000); color:white; text-decoration:none; border-radius:.65rem; font-weight:600; font-size:.95rem; box-shadow:0 4px 14px rgba(255,0,0,.3); transition:all .3s; }
+.btn-signin:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(255,0,0,.42); }
+
+.history-main { max-width:1100px; margin:0 auto; padding:2.5rem 2rem 4rem; }
+.toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem; }
+.toolbar-title { font-size:1.2rem; font-weight:700; color:var(--gray-900); margin:0 0 .15rem; }
+.toolbar-sub   { font-size:.83rem; color:var(--gray-500); margin:0; }
+.toolbar-right { display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; }
+.filter-tabs { display:flex; gap:.3rem; background:var(--gray-100); padding:.2rem; border-radius:.55rem; }
+.filter-tab { padding:.42rem .9rem; border:none; background:none; border-radius:.4rem; font-size:.83rem; font-weight:500; color:var(--gray-600); cursor:pointer; transition:all .2s; }
+.filter-tab.active { background:white; color:var(--gray-900); box-shadow:0 1px 4px rgba(0,0,0,.1); font-weight:600; }
+.btn-create { display:inline-flex; align-items:center; gap:.45rem; padding:.65rem 1.35rem; background:linear-gradient(135deg,#FF0000,#CC0000); color:white; text-decoration:none; border-radius:.6rem; font-weight:600; font-size:.88rem; transition:all .3s; box-shadow:0 4px 14px rgba(255,0,0,.3); }
+.btn-create:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(255,0,0,.42); }
+.btn-clear { display:inline-flex; align-items:center; gap:.45rem; padding:.65rem 1.1rem; background:white; color:#dc2626; border:1.5px solid #fca5a5; border-radius:.6rem; font-weight:600; font-size:.83rem; cursor:pointer; transition:all .2s; font-family:inherit; }
+.btn-clear:hover { background:#fee2e2; border-color:#dc2626; transform:translateY(-1px); }
+
+.loading-state { text-align:center; padding:5rem 2rem; }
+.spinner { width:48px; height:48px; border:4px solid rgba(255,0,0,.15); border-top-color:#FF0000; border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 1.2rem; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.loading-state p { color:var(--gray-500); font-size:.95rem; }
+
+.empty-state { text-align:center; padding:5rem 2rem; animation:fadeUp .6s ease-out; }
+.empty-icon { width:96px; height:96px; background:linear-gradient(135deg,#fff0f0,#ffe4e4); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.4rem; font-size:2.4rem; }
+.empty-state h3 { font-size:1.35rem; font-weight:700; color:var(--gray-900); margin:0 0 .65rem; }
+.empty-state p  { color:var(--gray-500); max-width:360px; margin:0 auto 1.75rem; line-height:1.6; }
+
+.thumbs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.5rem; }
+.thumb-card { background:white; border-radius:1.1rem; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.07); border:1.5px solid var(--gray-200); transition:all .3s ease; animation:fadeUp .5s ease-out both; }
+.thumb-card:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,.14); border-color:#FF0000; }
+
+.thumb-preview { width:100%; aspect-ratio:16/9; position:relative; overflow:hidden; background:#111; display:block; }
+.preview-real-img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s ease; }
+.thumb-card:hover .preview-real-img { transform:scale(1.04); }
+.preview-fallback { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem; box-sizing:border-box; transition:transform .35s ease; }
+.thumb-card:hover .preview-fallback { transform:scale(1.04); }
+.fallback-title { font-family:'Poppins',sans-serif; font-weight:800; text-align:center; line-height:1.3; margin-bottom:.3rem; text-shadow:0 2px 6px rgba(0,0,0,.45); word-break:break-word; max-width:100%; font-size:16px; }
+.fallback-sub  { font-size:11px; font-weight:500; text-align:center; opacity:.9; word-break:break-word; }
+
+.preview-badges { position:absolute; top:.5rem; right:.55rem; display:flex; gap:.3rem; z-index:3; }
+.badge { font-size:.65rem; font-weight:700; padding:.18rem .55rem; border-radius:1rem; text-transform:uppercase; letter-spacing:.05em; color:white; backdrop-filter:blur(6px); }
+.badge-advanced { background:rgba(220,38,38,.82); }
+.badge-simple   { background:rgba(37,99,235,.78); }
+
+.preview-overlay { position:absolute; inset:0; background:rgba(0,0,0,0); display:flex; align-items:center; justify-content:center; gap:.65rem; opacity:0; transition:all .25s ease; z-index:2; }
+.thumb-card:hover .preview-overlay { opacity:1; background:rgba(0,0,0,.42); }
+.ov-btn { width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.93); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:.9rem; color:#222; text-decoration:none; transform:scale(.75); transition:all .2s; }
+.thumb-card:hover .ov-btn { transform:scale(1); }
+.ov-btn:hover { background:white; transform:scale(1.12) !important; box-shadow:0 4px 16px rgba(0,0,0,.2); }
+.ov-btn-edit:hover { background:#fffbeb; color:#d97706; }
+.ov-btn-dl:hover   { background:#eff6ff; color:#2563eb; }
+.ov-btn-del:hover  { background:#fee2e2; color:#dc2626; }
+
+.thumb-body { padding:.9rem 1.1rem; }
+.thumb-top  { display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem; margin-bottom:.6rem; }
+.thumb-name { font-size:.92rem; font-weight:700; color:var(--gray-900); margin:0 0 .18rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; }
+.thumb-sub-text { font-size:.77rem; color:var(--gray-500); margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px; font-style:italic; }
+.swatches { display:flex; gap:4px; align-items:center; flex-shrink:0; }
+.swatch   { width:16px; height:16px; border-radius:50%; border:2px solid white; box-shadow:0 0 0 1px rgba(0,0,0,.15); }
+.thumb-foot { display:flex; justify-content:space-between; align-items:center; }
+.thumb-date { font-size:.74rem; color:var(--gray-400); display:flex; align-items:center; gap:.3rem; }
+.card-actions { display:flex; gap:.4rem; }
+.act-btn { display:inline-flex; align-items:center; gap:.3rem; padding:.32rem .7rem; border-radius:.4rem; font-size:.73rem; font-weight:600; text-decoration:none; cursor:pointer; border:1.5px solid transparent; font-family:inherit; transition:all .2s; background:white; }
+.act-btn-edit { color:#d97706; border-color:#fde68a; background:#fffbeb; }
+.act-btn-edit:hover { background:#fef3c7; border-color:#d97706; transform:translateY(-1px); }
+.act-btn-dl   { color:#2563eb; border-color:#bfdbfe; background:#eff6ff; }
+.act-btn-dl:hover { background:#dbeafe; border-color:#2563eb; transform:translateY(-1px); }
+.act-btn-del  { color:#dc2626; border-color:#fca5a5; background:#fff5f5; }
+.act-btn-del:hover { background:#fee2e2; border-color:#dc2626; transform:translateY(-1px); }
+
+@media(max-width:768px) {
+    .history-hero{padding:3rem 1rem 2.5rem} .hero-stats{gap:1.5rem}
+    .history-main{padding:2rem 1rem 3rem} .toolbar{flex-direction:column;align-items:flex-start}
+    .thumbs-grid{grid-template-columns:1fr}
+    .preview-overlay{opacity:1;background:transparent;pointer-events:none}
+    .preview-overlay .ov-btn{transform:scale(1);pointer-events:auto}
+}
+@media(max-width:480px){.hero-stats{gap:1rem}.stat-num{font-size:1.4rem}.thumb-name,.thumb-sub-text{max-width:140px}}
+</style>
+
+<section class="history-hero">
+    <div class="history-hero-content">
+        <div class="hero-badge"><i class="fas fa-history"></i> My History</div>
+        <h1>Your <span>Thumbnails</span></h1>
+        <p>Manage, re-edit and revisit all the thumbnails you've created</p>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-num" id="stat-total">—</span><span class="stat-lbl">Total Created</span></div>
+            <div class="stat-item"><span class="stat-num" id="stat-simple">—</span><span class="stat-lbl">Simple Mode</span></div>
+            <div class="stat-item"><span class="stat-num" id="stat-advanced">—</span><span class="stat-lbl">Advanced Mode</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="history-main">
+
+    <div id="login-gate" class="login-gate" style="display:none;">
+        <div class="login-gate-icon">🔐</div>
+        <h3>Sign in to see your history</h3>
+        <p>Your thumbnail history is saved to your account. Sign in to access and manage your creations.</p>
+        <a href="/login?next=/history" class="btn-signin"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+    </div>
+
+    <div id="loading-state" class="loading-state" style="display:none;">
+        <div class="spinner"></div><p>Loading your thumbnails…</p>
+    </div>
+
+    <div id="history-content" style="display:none;">
+        <div class="toolbar">
+            <div>
+                <p class="toolbar-title">All Thumbnails</p>
+                <p class="toolbar-sub" id="toolbar-sub-text">Your recently generated designs</p>
+            </div>
+            <div class="toolbar-right">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterCards('all',this)">All</button>
+                    <button class="filter-tab" onclick="filterCards('simple',this)">Simple</button>
+                    <button class="filter-tab" onclick="filterCards('advanced',this)">Advanced</button>
+                </div>
+                <button class="btn-clear" id="clear-all-btn" onclick="clearAllHistory()" style="display:none;">
+                    <i class="fas fa-trash"></i> Clear All
+                </button>
+                <a href="/generator" class="btn-create"><i class="fas fa-plus"></i> Create New</a>
+            </div>
+        </div>
+
+        <div id="empty-state" class="empty-state" style="display:none;">
+            <div class="empty-icon">🎨</div>
+            <h3>No thumbnails yet!</h3>
+            <p>You haven't created any thumbnails yet. Make your first one and it will appear here.</p>
+            <a href="/generator" class="btn-create" style="display:inline-flex;"><i class="fas fa-magic"></i> Create Your First</a>
+        </div>
+
+        <div class="thumbs-grid" id="thumb-grid"></div>
+    </div>
+
+</section>
+
+<script>
+let allThumbnails = [];
+let currentUserId = null;
+
+window.addEventListener('load', async () => {
+    showSection('loading');
+    let w = 0;
+    while (!window.Clerk && w < 5000) { await sleep(100); w += 100; }
+    if (!window.Clerk) { showSection('login'); return; }
+    await window.Clerk.load();
+    if (!window.Clerk.user) { showSection('login'); return; }
+    currentUserId = window.Clerk.user.id;
+    await loadHistory();
+    window.Clerk.addListener(({ user }) => {
+        if (user) { currentUserId = user.id; loadHistory(); }
+        else       { currentUserId = null; showSection('login'); }
+    });
+});
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function loadHistory() {
+    showSection('loading');
+    try {
+        const res = await fetch(`/api/history?user_id=${encodeURIComponent(currentUserId)}`);
+        if (!res.ok) throw new Error('API ' + res.status);
+        allThumbnails = await res.json();
+    } catch(e) { console.error(e); allThumbnails = []; }
+    renderAll();
+    showSection('content');
+}
+
+function renderAll() {
+    const total    = allThumbnails.length;
+    const simple   = allThumbnails.filter(t => t.mode === 'simple').length;
+    const advanced = allThumbnails.filter(t => t.mode === 'advanced').length;
+    document.getElementById('stat-total').textContent    = total;
+    document.getElementById('stat-simple').textContent   = simple;
+    document.getElementById('stat-advanced').textContent = advanced;
+    document.getElementById('toolbar-sub-text').textContent = total === 1 ? '1 thumbnail' : `${total} thumbnails`;
+    document.getElementById('clear-all-btn').style.display = total > 0 ? 'inline-flex' : 'none';
+    const grid = document.getElementById('thumb-grid');
+    const empty = document.getElementById('empty-state');
+    if (total === 0) { grid.innerHTML = ''; empty.style.display = 'block'; }
+    else { empty.style.display = 'none'; grid.innerHTML = allThumbnails.map((t,i) => buildCard(t,i)).join(''); }
+}
+
+function buildCard(t, i) {
+    const bg   = t.bg_color   || '#FF0000';
+    const tc   = t.text_color || '#FFFFFF';
+    const id   = t.id;
+    const mode = t.mode || 'simple';
+    const mc   = mode === 'advanced' ? 'badge-advanced' : 'badge-simple';
+    const s    = trim(t.title || 'Untitled', 40);
+    const sub  = trim(t.subtitle || '', 50);
+
+    let preview;
+    if (t.thumbnail_file) {
+        preview = `<img class="preview-real-img" src="/static/thumbnails/${esc(t.thumbnail_file)}" alt="${esc(s)}" loading="lazy">`;
+    } else {
+        preview = `<div class="preview-fallback" style="background:${bg}">
+            <div class="fallback-title" style="color:${tc}">${esc(s)}</div>
+            ${sub ? `<div class="fallback-sub" style="color:${tc}">${esc(sub)}</div>` : ''}
+        </div>`;
+    }
+
+    const dlOv   = t.thumbnail_file ? `<a href="/static/thumbnails/${esc(t.thumbnail_file)}" download="thumb-${id}.png" class="ov-btn ov-btn-dl" title="Download"><i class="fas fa-download"></i></a>` : '';
+    const dlCard = t.thumbnail_file ? `<a href="/static/thumbnails/${esc(t.thumbnail_file)}" download="thumb-${id}.png" class="act-btn act-btn-dl"><i class="fas fa-download"></i></a>` : '';
+
+    return `
+    <div class="thumb-card" data-mode="${mode}" data-id="${id}" style="animation-delay:${(i*.05).toFixed(2)}s">
+        <div class="thumb-preview">
+            ${preview}
+            <div class="preview-badges"><span class="badge ${mc}">${mode}</span></div>
+            <div class="preview-overlay">
+                <button type="button" class="ov-btn ov-btn-edit" title="Re-edit" onclick="editThumbnail('${id}')"><i class="fas fa-pen"></i></button>
+                ${dlOv}
+                <button type="button" class="ov-btn ov-btn-del" title="Delete" onclick="deleteEntry('${id}')"><i class="fas fa-trash-alt"></i></button>
+            </div>
+        </div>
+        <div class="thumb-body">
+            <div class="thumb-top">
+                <div>
+                    <p class="thumb-name" title="${esc(t.title||'')}">${esc(s)}</p>
+                    <p class="thumb-sub-text">${sub ? esc(sub) : '<em>No subtitle</em>'}</p>
+                </div>
+                <div class="swatches">
+                    <div class="swatch" style="background:${bg}" title="BG"></div>
+                    <div class="swatch" style="background:${tc}" title="Text"></div>
+                </div>
+            </div>
+            <div class="thumb-foot">
+                <span class="thumb-date"><i class="fas fa-clock"></i> ${t.created_at||''}</span>
+                <div class="card-actions">
+                    <button type="button" class="act-btn act-btn-edit" onclick="editThumbnail('${id}')"><i class="fas fa-pen"></i> Edit</button>
+                    ${dlCard}
+                    <button type="button" class="act-btn act-btn-del" onclick="deleteEntry('${id}')"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function editThumbnail(id) {
+    const entry = allThumbnails.find(t => t.id === id);
+    if (!entry) return;
+    try {
+        sessionStorage.setItem('tpro_edit', JSON.stringify(entry));
+    } catch(e) {
+     
+        const lite = JSON.parse(JSON.stringify(entry));
+        if (lite.canvas_state?.background) lite.canvas_state.background.imageData = null;
+        if (lite.bg_image_data) lite.bg_image_data = null;
+        try { sessionStorage.setItem('tpro_edit', JSON.stringify(lite)); } catch(e2){}
+    }
+    window.location.href = '/generator';
+}
+
+function filterCards(mode, btn) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.thumb-card').forEach(c => {
+        c.style.display = (mode === 'all' || c.dataset.mode === mode) ? '' : 'none';
+    });
+}
+
+async function deleteEntry(id) {
+    if (!confirm('Delete this thumbnail? This cannot be undone.')) return;
+    const card = document.querySelector(`.thumb-card[data-id="${id}"]`);
+    if (card) { card.style.opacity = '.4'; card.style.pointerEvents = 'none'; }
+    try {
+        const res = await fetch(`/api/history/${id}`, {
+            method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: currentUserId })
+        });
+        if (!res.ok) throw new Error();
+        allThumbnails = allThumbnails.filter(t => t.id !== id);
+        renderAll();
+        toast('Thumbnail deleted', 'success');
+    } catch(e) {
+        if (card) { card.style.opacity = '1'; card.style.pointerEvents = ''; }
+        toast('Failed to delete.', 'error');
+    }
+}
+
+async function clearAllHistory() {
+    if (!confirm(`Delete all ${allThumbnails.length} thumbnails? Cannot be undone.`)) return;
+    try {
+        await fetch('/api/history/clear', {
+            method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: currentUserId })
+        });
+        allThumbnails = []; renderAll(); toast('All thumbnails cleared', 'success');
+    } catch(e) { toast('Failed to clear.', 'error'); }
+}
+
+function showSection(w) {
+    document.getElementById('login-gate').style.display      = w==='login'   ? 'block':'none';
+    document.getElementById('loading-state').style.display   = w==='loading' ? 'block':'none';
+    document.getElementById('history-content').style.display = w==='content' ? 'block':'none';
+}
+
+function toast(msg, type='success') {
+    const old = document.getElementById('h-toast');
+    if (old) old.remove();
+    const el = document.createElement('div');
+    el.id = 'h-toast';
+    el.style.cssText = `position:fixed;bottom:2rem;right:2rem;z-index:9999;padding:.85rem 1.4rem;border-radius:.7rem;font-weight:600;font-size:.9rem;box-shadow:0 8px 24px rgba(0,0,0,.18);background:${type==='success'?'#10b981':'#ef4444'};color:white;display:flex;align-items:center;gap:.5rem;animation:toastIn .3s ease;`;
+    el.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-circle'}"></i> ${msg}`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function trim(s, n) { return s.length > n ? s.slice(0,n)+'…' : s; }
+
+const _s = document.createElement('style');
+_s.textContent = '@keyframes toastIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}';
+document.head.appendChild(_s);
+</script>
+
+{% endblock %}

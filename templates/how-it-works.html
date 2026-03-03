@@ -94,7 +94,7 @@
                     <h3><i class="fas fa-palette"></i> Choose Background</h3>
                     <p>Select a color from the palette or upload your own image background</p>
                     <div class="step-features">
-                        <span class="feature-tag">6 quick templates</span>
+                        <span class="feature-tag">5 quick templates</span>
                         <span class="feature-tag">Custom colors</span>
                         <span class="feature-tag">Image upload</span>
                     </div>
@@ -130,12 +130,12 @@
             <div class="step">
                 <div class="step-number">5</div>
                 <div class="step-content">
-                    <h3><i class="fas fa-download"></i> Download Instantly</h3>
-                    <p>Get your YouTube-ready thumbnail in perfect 1280x720 resolution</p>
+                    <h3><i class="fas fa-download"></i> Download & Save to History</h3>
+                    <p>Get your YouTube-ready thumbnail in perfect 1280×720 resolution — it's automatically saved to your account history for easy access later</p>
                     <div class="step-features">
                         <span class="feature-tag">PNG format</span>
                         <span class="feature-tag">High quality</span>
-                        <span class="feature-tag">YouTube ready</span>
+                        <span class="feature-tag">Saved to history</span>
                     </div>
                     <div class="step-visual">
                         <button class="download-demo">
@@ -192,7 +192,7 @@
                         <span class="feature-tag">Unlimited text</span>
                         <span class="feature-tag">6 shape types</span>
                         <span class="feature-tag">20+ icons</span>
-                        <span class="feature-tag">Multiple images</span>
+                        <span class="feature-tag">Multiple images + filters</span>
                     </div>
                     <div class="step-visual">
                         <div class="toolbar-mockup">
@@ -301,9 +301,10 @@
                     <h4>You get:</h4>
                     <ul>
                         <li>Title + subtitle text</li>
-                        <li>6 color templates</li>
+                        <li>5 gradient templates</li>
                         <li>Basic text styling</li>
                         <li>Image backgrounds</li>
+                        <li>Auto-saved history</li>
                     </ul>
                 </div>
                 <div class="mode-footer">
@@ -336,6 +337,7 @@
                         <li>20+ premium templates</li>
                         <li>Shapes & icons library</li>
                         <li>Drag & drop editor</li>
+                        <li>Image filters (brightness, sepia etc.)</li>
                     </ul>
                 </div>
                 <div class="mode-footer">
@@ -1245,12 +1247,10 @@ document.addEventListener('DOMContentLoaded', function() {
     workflowButtons.forEach(button => {
         button.addEventListener('click', function() {
             const workflow = this.dataset.workflow;
-            
-            // Update button states
+
             workflowButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
-            
-            // Update content visibility
+
             workflowContents.forEach(content => {
                 content.classList.remove('active');
             });
