@@ -8,7 +8,7 @@ A web-based tool that enables content creators to design professional YouTube th
 
 **Problem Statement:** YouTube creators need eye-catching thumbnails to increase video CTR, but professional design tools are expensive and have a steep learning curve. Most creators lack design skills yet thumbnails directly impact video performance.
 
-**Solution:** ThumbnailPro provides a free, browser-based tool with dual editing modes (simple form-based & advanced canvas-based), pre-designed templates, and instant downloads in YouTube's recommended format (1280x720 PNG).
+**Solution:** ThumbnailPro provides a free, browser-based tool with dual editing modes (simple form-based & advanced canvas-based), pre-designed templates, user authentication, thumbnail history, and instant downloads in YouTube's recommended format (1280x720 PNG).
 
 ---
 
@@ -24,6 +24,9 @@ A web-based tool that enables content creators to design professional YouTube th
 - Flask (Web Framework)
 - Pillow (PIL) for image processing
 
+**Authentication:**
+- Clerk (Sign In / Sign Up widgets, Google OAuth)
+
 ---
 
 ## Key Features
@@ -34,6 +37,8 @@ A web-based tool that enables content creators to design professional YouTube th
 - **Visual Effects:** Text shadows with customizable offset and color, gradient backgrounds
 - **Image Processing:** Background image upload with filters (brightness, contrast, sepia, grayscale, saturation)
 - **Standard Output:** 1280x720px PNG files (YouTube recommended aspect ratio: 16:9)
+- **User Authentication:** Secure sign-in and sign-up via Clerk with Google OAuth support
+- **Thumbnail History:** Per-user history with up to 50 saved thumbnails, preview images, and delete controls
 
 ---
 
@@ -80,6 +85,18 @@ A web-based tool that enables content creators to design professional YouTube th
 6. Flask decodes and validates
 7. Returns as downloadable PNG
 
+**Authentication Flow:**
+1. User visits `/login` or `/register`
+2. Clerk widget mounts and handles sign-in / sign-up
+3. On success, user is redirected to `/generator`
+4. Clerk user ID is passed to all history API calls
+
+**History Flow:**
+1. After each generation, thumbnail is saved via `/api/history/add`
+2. User ID + thumbnail data + preview PNG stored in `thumbnail_history.json`
+3. Preview images saved to `static/thumbnails/`
+4. User views and manages history at `/history`
+
 ---
 
 ## Project Structure
@@ -89,6 +106,9 @@ youtube-thumbnail-generator/
 │   ├── base.html              # Base template with navbar/footer
 │   ├── index.html             # Landing page
 │   ├── generator.html         # Main thumbnail editor
+│   ├── login.html             # Clerk Sign In widget page
+│   ├── register.html          # Clerk Sign Up widget page
+│   ├── history.html           # User thumbnail history page
 │   ├── features.html          # Features showcase
 │   └── how-it-works.html      # Tutorial page
 ├── static/
@@ -96,9 +116,12 @@ youtube-thumbnail-generator/
 │   │   └── style.css          # Main stylesheet
 │   ├── js/
 │   │   └── script.js          # Frontend logic (1698 lines)
+│   ├── thumbnails/            # Saved thumbnail preview images (auto-created)
 │   └── uploads/               # Temporary file storage
 ├── app.py                      # Flask backend server
+├── thumbnail_history.json      # Per-user history store (auto-created)
 ├── requirements.txt            # Python dependencies
+├── .env                        # Environment variables
 └── README.md                   # Documentation
 ```
 
@@ -125,14 +148,12 @@ youtube-thumbnail-generator/
 </table>
 
 
-
-
 ---
 
 ## Why This Project Matters
 
 **Problem Solved:**
-This project matters because it helps YouTube creators design professional thumbnails quickly and easily without needing expensive software or graphic design skills.
+This project matters because it helps YouTube creators design professional thumbnails quickly and easily without needing expensive software or graphic design skills. With the addition of user authentication and history, creators can now manage all their thumbnail designs in one place across sessions.
 
 ---
 
@@ -162,6 +183,19 @@ This project matters because it helps YouTube creators design professional thumb
 2. Click "Use This Template" 
 3. Replace default text
 4. Download immediately
+
+**Login / Register:**
+
+1. Visit `/login` or `/register`
+2. Sign in with email or Google account via Clerk
+3. On success, redirected to the generator automatically
+
+**Thumbnail History:**
+
+1. Generate any thumbnail while signed in
+2. It is automatically saved to your history
+3. Visit `/history` to view, re-download, or delete past thumbnails
+4. Clear all history with one click
 
 ---
 
